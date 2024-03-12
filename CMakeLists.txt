@@ -4,13 +4,13 @@ project(hoymilesClient VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
-include_directories(inc)
+include_directories(inc inc/libmodbus)
 
-file(GLOB SOURCES src/*.cpp src/*.c)
+file(GLOB SOURCES src/*.cpp src/libmodbus/*.c)
 
 add_executable(hoymilesClient_exec ${SOURCES})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/inc/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/inc/libmodbus/config.h)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
