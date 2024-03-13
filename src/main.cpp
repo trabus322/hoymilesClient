@@ -13,12 +13,8 @@ int main(){
     int port {502};
 
     Dtu dtu {ip_address.c_str(), port};
-
-    bool buttonPressed{false};
-   for(int i{0}; i<10; i++){
-        dtu.readTest(0x1034, 2);
-        std::clog << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    while(true) {
+        dtu.updateMicroinverters();
     }
 
     return 0;

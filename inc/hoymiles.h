@@ -7,27 +7,34 @@
 struct _modbus;
 typedef _modbus modbus_t;
 
-class Dtu{
-    private:
-    modbus_t *modbus_t;
-
-    std::vector<Microinverter> microinverters;
-
-    public:
-    Dtu(const char *ip_address, int port);
-
-    void readTest(uint16_t address, int registers);
-
-    ~Dtu();
-};
-
 class Microinverter{
     private:
-    uint16_t readArray[33];
+    modbus_t *modbus_context;
     uint16_t address;
 
+    void updatePortNumber();
+
+    void updatePlantVoltage();
+    void updatePlantCurrent();
+
+    void updateGridVoltage();
+    void updateGridFrequency();
+
+    void updatePlantPower();
+
+    void updateTodayProduction();
+    void updateTotalProduction();
+
+    void updateTemperature();
+
+    void updateOperatingStatus();
+    void updateAlarmCode();
+    void updateAlarmCount();
+
+    void updateLinkStatus();
+
     public:
-    const int serialNumber;
+    int serialNumber;
     std::pair<int, int> portNumber;
 
     std::pair<float, int> plantVoltage;
@@ -49,9 +56,25 @@ class Microinverter{
 
     std::pair<int, int> linkStatus;
 
-    Microinverter(uint16_t address);
+    Microinverter(modbus_t *modbus_t, uint16_t address);
 
     void updateValues();
+};
+
+class Dtu{
+    private:
+    modbus_t *modbus_context;
+
+    std::vector<Microinverter> microinverters;
+
+    void populateMicroinverters();
+
+    public:
+    Dtu(const char *ip_address, int port);
+
+    void updateMicroinverters();
+
+    ~Dtu();
 };
 
 #endif
