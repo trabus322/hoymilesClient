@@ -2,64 +2,98 @@
 #define HOYMILES_H
 
 #include <stdint.h>
-#include <vector>
 #include <string>
+#include <vector>
+#include <memory>
 
 struct _modbus;
 typedef _modbus modbus_t;
 
-class MicroinverterParameter {
-    public:
-    std::string name;
+class PortParameter {
+      protected:
+	uint16_t addressOffset;
 
-    int valueInt;
-    float valueFloat;
+	int registerSize;
 
-    int age;
+	void setValue(uint16_t *readArray, int registerCount);
 
-    uint16_t addressOffset;
-    int registerSize;
+      public:
+	PortParameter(std::string name, uint16_t addressOffset, int registerSize);
 
-    MicroinverterParameter(std::string name, uint16_t addressOffset, int registerSize);
+	std::string name;
+	int age;
+	int value;
 
-    void updateValue(modbus_t *modbus_context, uint16_t microinverterAddress); 
+	virtual void updateValue(modbus_t *modbus_context, uint16_t portStartAddress);
 };
 
-class Microinverter{
-    private:
-    modbus_t *modbus_context;
-    uint16_t address;
+class PortParameterSerialNumber : public PortParameter {
+      private:
+    void setValue(uint16_t *readArray, int registerCount);
 
-    std::vector<MicroinverterParameter> parameters;
+      public:
+	PortParameterSerialNumber();
+};
+
+class PortParameterFloat : public PortParameter {
+      private:
+	int decimalPlaces;
+
+    void setValue(uint16_t *readArray, int registerCount);
+
+      public:
+	PortParameterFloat(std::string name, uint16_t addressOffset, int registerSize, int decimalPlaces);
+
+	float value;
+};
+
+class Port {
+      private:
+	modbus_t *modbus_context;
+	uint16_t portStartAddress;
+
+	std::vector<std::shared_ptr<PortParameter>> parameters;
+
+    void populateParameters();
 
     public:
-    Microinverter(modbus_t *modbus_t, uint16_t address);
+    Port(modbus_t *modbus_context, uint16_t portStartAddress);
 
     void updateParameters();
-
-    void updateParameterByIndex(int i);
-
-    void updateParameterByName(std::string name);
-
-    MicroinverterParameter getParameterByIndex(int i);
-
-    MicroinverterParameter getParameterByName(std::string name);
 };
 
-class Dtu{
-    private:
-    modbus_t *modbus_context;
+class Microinverter {
+      private:
+	modbus_t *modbus_context;
 
-    std::vector<Microinverter> microinverters;
+	std::vector<Port> ports;
 
-    void populateMicroinverters();
+	void populatePorts();
 
-    public:
-    Dtu(const char *ip_address, int port);
+      public:
+	Microinverter(modbus_t *modbus_t);
 
-    void updateMicroinverters();
+	void updatePorts();
 
-    ~Dtu();
+	void updatePort(int i);
+
+	Port getPort(int i);
+};
+
+class Dtu {
+      private:
+	modbus_t *modbus_context;
+
+	std::vector<Microinverter> microinverters;
+
+	void populateMicroinverters();
+
+      public:
+	Dtu(const char *ip_address, int port);
+
+	void updateMicroinverters();
+
+	~Dtu();
 };
 
 #endif
