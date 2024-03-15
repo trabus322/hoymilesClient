@@ -3,62 +3,47 @@
 
 #include <stdint.h>
 #include <vector>
+#include <string>
 
 struct _modbus;
 typedef _modbus modbus_t;
+
+class MicroinverterParameter {
+    public:
+    std::string name;
+
+    int valueInt;
+    float valueFloat;
+
+    int age;
+
+    uint16_t addressOffset;
+    int registerSize;
+
+    MicroinverterParameter(std::string name, uint16_t addressOffset, int registerSize);
+
+    void updateValue(modbus_t *modbus_context, uint16_t microinverterAddress); 
+};
 
 class Microinverter{
     private:
     modbus_t *modbus_context;
     uint16_t address;
 
-    void updatePortNumber();
-
-    void updatePlantVoltage();
-    void updatePlantCurrent();
-
-    void updateGridVoltage();
-    void updateGridFrequency();
-
-    void updatePlantPower();
-
-    void updateTodayProduction();
-    void updateTotalProduction();
-
-    void updateTemperature();
-
-    void updateOperatingStatus();
-    void updateAlarmCode();
-    void updateAlarmCount();
-
-    void updateLinkStatus();
+    std::vector<MicroinverterParameter> parameters;
 
     public:
-    int serialNumber;
-    std::pair<int, int> portNumber;
-
-    std::pair<float, int> plantVoltage;
-    std::pair<float, int> plantCurrent;
-
-    std::pair<float, int> gridVoltage;
-    std::pair<float, int> gridFrequency;
-
-    std::pair<float, int> plantPower;
-
-    std::pair<long, int> todayProduction;
-    std::pair<long, int> totalProduction;
-
-    std::pair<int, int> temperature;
-
-    std::pair<int, int> operatingStatus;
-    std::pair<int, int> alarmCode;
-    std::pair<int, int> alarmCount;
-
-    std::pair<int, int> linkStatus;
-
     Microinverter(modbus_t *modbus_t, uint16_t address);
 
-    void updateValues();
+    void updateParameters();
+
+    void updateParameterByIndex(int i);
+
+    void updateParameterByName(std::string name);
+
+    MicroinverterParameter getParameterByIndex(int i);
+
+    MicroinverterParameter getParameterByName(std::string name);
 };
 
 class Dtu{
