@@ -10,24 +10,45 @@ struct _modbus;
 typedef _modbus modbus_t;
 
 class PortParameter {
-      protected:
+	  protected:
 	uint16_t addressOffset;
-
 	int registerSize;
 
-	void setValue(uint16_t *readArray, int registerCount);
+	virtual void setValue(uint16_t *readArray, int registerCount);
 
-      public:
+	  public:
 	PortParameter(std::string name, uint16_t addressOffset, int registerSize);
 
 	std::string name;
+
 	int age;
-	int value;
 
 	virtual void updateValue(modbus_t *modbus_context, uint16_t portStartAddress);
 };
 
-class PortParameterSerialNumber : public PortParameter {
+
+
+template<typename Type>
+class PortParameterTemplate : virtual public PortParameter {
+	  public:
+	PortParameterTemplate(std::string name, uint16_t addressOffset, int registerSize);
+
+	Type value;
+
+	Type getValue();
+};
+
+class PortParameterInt : public PortParameterTemplate<int> {
+	  private:
+	void setValue(uint16_t *readArray, int registerCount);
+
+      public:
+	PortParameterInt();
+};
+
+
+
+class PortParameterSerialNumber : public PortParameterTemplate<std::string> {
       private:
     void setValue(uint16_t *readArray, int registerCount);
 
@@ -35,7 +56,9 @@ class PortParameterSerialNumber : public PortParameter {
 	PortParameterSerialNumber();
 };
 
-class PortParameterFloat : public PortParameter {
+
+
+class PortParameterFloat : public PortParameterTemplate<float> {
       private:
 	int decimalPlaces;
 
@@ -46,6 +69,8 @@ class PortParameterFloat : public PortParameter {
 
 	float value;
 };
+
+
 
 class Port {
       private:
@@ -60,7 +85,13 @@ class Port {
     Port(modbus_t *modbus_context, uint16_t portStartAddress);
 
     void updateParameters();
+
+	std::shared_ptr<PortParameter> getParameterById(int i);
+
+	std::shared_ptr<PortParameter> getParameterByName(std::string name);
 };
+
+
 
 class Microinverter {
       private:
@@ -79,6 +110,8 @@ class Microinverter {
 
 	Port getPort(int i);
 };
+
+
 
 class Dtu {
       private:
