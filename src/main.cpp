@@ -4,8 +4,8 @@
 #include <chrono>
 #include <thread>
 
-#include "hoymiles.h"
 #include "modbus.h"
+#include "dtu.h"
 
 int main(){
 
@@ -21,7 +21,5 @@ int main(){
 
     hoymilesPort.updateParameters();
 
-    std::shared_ptr<PortParameter> temp{hoymilesPort.getParameterById(0)};
-    float temp2 = temp.get()->getValue();
     return 0;
 }

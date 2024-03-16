@@ -4,9 +4,9 @@ project(hoymilesClient VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
-include_directories(inc inc/libmodbus)
+include_directories(inc inc/libmodbus inc/hoymiles)
 
-file(GLOB SOURCES src/*.cpp src/libmodbus/*.c)
+file(GLOB SOURCES src/*.cpp src/libmodbus/*.c src/hoymiles/*.cpp)
 
 add_executable(hoymilesClient_exec ${SOURCES})
 
