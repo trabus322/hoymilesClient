@@ -1,10 +1,25 @@
 #include <cmath>
+#include <string>
+#include <iomanip>
 
 #include "portParameters.h"
 
-PortParameterMicroinverterSerialNumber::PortParameterMicroinverterSerialNumber() : PortParameterInt("microinverterSerialNumber", 0x0001, 6), PortParameter("microinverterSerialNumber", 0x1001, 6) {}
+PortParameterMicroinverterSerialNumber::PortParameterMicroinverterSerialNumber() : PortParameterInt("microinverterSerialNumber", 0x0001, 6), PortParameter("microinverterSerialNumber", 0x0001, 6) {}
 
-PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumber", 0x0007, 1), PortParameter("portNumber", 0x007, 1) {}
+void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
+	uint16_t readValue;
+	std::string readValueString = "";
+	registerCount = std::ceil(registerCount/2);
+	for (int i{0}; i < registerCount; i++) {
+		readValue = readArray[i];
+		std::stringstream readValueStringStream;
+		readValueStringStream << std::hex << readValue;
+		readValueString.append(readValueStringStream.str());
+	}
+	this->value.i = std::stol(readValueString);
+}
+
+PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumber", 0x0007, 1), PortParameter("portNumber", 0x0007, 1) {}
 
 void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
 	if (registerCount > 0) {

@@ -2,6 +2,8 @@
 #define DTU_H
 
 #include <vector>
+#include <memory>
+#include <mutex>
 
 #include "microinverter.h"
 
@@ -10,7 +12,8 @@ typedef _modbus modbus_t;
 
 class Dtu {
       private:
-	modbus_t *modbus_context;
+	std::shared_ptr<modbus_t*> modbus_context;
+	std::mutex modbus_context_mutex;
 
 	std::vector<Microinverter> microinverters;
 

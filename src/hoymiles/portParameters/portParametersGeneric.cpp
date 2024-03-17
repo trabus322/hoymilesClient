@@ -1,4 +1,6 @@
 #include <cmath>
+#include <memory>
+#include <mutex>
 
 #include "modbus.h"
 
@@ -26,10 +28,13 @@ std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueTy
 
 std::string PortParameter::getOutputValue() {}
 
-void PortParameter::updateValue(modbus_t *modbus_context, uint16_t portStartAddress) {
+void PortParameter::updateValue(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress) {
 	uint16_t readArray[this->registerSize];
 	int registerCount;
-	registerCount = modbus_read_registers(modbus_context, portStartAddress + this->parameterAddressOffset, this->registerSize, readArray);
+	
+	modbus_context_mutex->lock();
+	registerCount = modbus_read_registers(*modbus_context.get(), portStartAddress + this->parameterAddressOffset, this->registerSize, readArray);
+	modbus_context_mutex->unlock();
 
 	if(registerCount == -1){
 		this->age++;
@@ -66,13 +71,13 @@ PortParameterInt::PortParameterInt(std::string name, uint16_t parameterAddressOf
 
 void PortParameterInt::setValueFromRegisters(uint16_t *readArray, int registerCount) {
 	uint16_t readValue;
+	std::string readValueString = "";
+	registerCount = std::ceil(registerCount/2);
 	for (int i{0}; i < registerCount; i++) {
-		readValue = (readArray[i] & 0xFF00);
-		this->value.i += readValue * std::pow(10, ((registerCount * 2) - ((registerCount - i) * 2)));
-
-		readValue = readArray[i] & 0x00FF;
-		this->value.i += readValue * std::pow(10, ((registerCount * 2) - ((registerCount - i) * 2)));
+		readValue = readArray[i];
+		readValueString.append(std::to_string(readValue));
 	}
+	this->value.i = std::stol(readValueString);
 }
 
 std::string PortParameterInt::getOutputValue() {

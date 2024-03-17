@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <string>
+#include <memory>
+#include <mutex>
 
 struct _modbus;
 typedef _modbus modbus_t;
@@ -38,7 +40,7 @@ class PortParameter {
 
 	virtual std::string getOutputValue();
 
-	void updateValue(modbus_t *modbus_context, uint16_t portStartAddress);
+	void updateValue(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress);
 };
 
 class PortParameterFloat : virtual public PortParameter {

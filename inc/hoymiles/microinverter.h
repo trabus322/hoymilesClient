@@ -2,6 +2,8 @@
 #define MICROINVERTER_H
 
 #include <vector>
+#include <memory>
+#include <mutex>
 
 #include "port.h"
 
@@ -10,14 +12,15 @@ typedef _modbus modbus_t;
 
 class Microinverter {
       private:
-	modbus_t *modbus_context;
+	std::shared_ptr<modbus_t*> modbus_context;
+	std::mutex *modbus_context_mutex;
 
 	std::vector<Port> ports;
 
 	void populatePorts();
 
       public:
-	Microinverter(modbus_t *modbus_t);
+	Microinverter(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex);
 
 	void updatePorts();
 

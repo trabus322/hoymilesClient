@@ -4,6 +4,9 @@
 #include "portParametersGeneric.h"
 
 class PortParameterMicroinverterSerialNumber : public PortParameterInt {
+      protected:
+    void setValueFromRegisters(uint16_t *readArray, int registerCount);
+
       public:
     PortParameterMicroinverterSerialNumber();
 };
