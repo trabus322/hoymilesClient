@@ -6,12 +6,11 @@
 
 PortParameterMicroinverterSerialNumber::PortParameterMicroinverterSerialNumber() : PortParameterInt("microinverterSerialNumber", 0x0001, 6), PortParameter("microinverterSerialNumber", 0x0001, 6) {}
 
-void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
+void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *readArray, int readArraySize) {
 	uint16_t readValue;
 	std::string readValueString = "";
-	registerCount = std::ceil(registerCount/2);
-	for (int i{0}; i < registerCount; i++) {
-		readValue = readArray[i];
+	for (int i{0}; i < std::ceil(this->registerSize/2) && (this->parameterAddressOffset + i) < readArraySize; i++) {
+		readValue = readArray[this->parameterAddressOffset + i];
 		std::stringstream readValueStringStream;
 		readValueStringStream << std::hex << readValue;
 		readValueString.append(readValueStringStream.str());
@@ -21,9 +20,9 @@ void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *rea
 
 PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumber", 0x0007, 1), PortParameter("portNumber", 0x0007, 1) {}
 
-void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
-	if (registerCount > 0) {
-		this->value.i = readArray[0];
+void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int readArraySize) {
+	if(readArraySize > this->parameterAddressOffset) {
+		this->value.i = readArray[this->parameterAddressOffset];
 	}
 }
 

@@ -1,17 +1,20 @@
-#include <vector>
-#include <string>
-#include <iostream>
 #include <cmath>
+#include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "modbus.h"
 
 #include "port.h"
 #include "portParameters.h"
 
-Port::Port(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress) {
+Port::Port(std::shared_ptr<modbus_t *> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress) {
 	this->modbus_context = modbus_context;
 	this->modbus_context_mutex = modbus_context_mutex;
+
+	this->readArraySize = 34;
+	this->readArray = new uint16_t[this->readArraySize];
 
 	this->portStartAddress = portStartAddress;
 
@@ -51,9 +54,15 @@ void Port::populateParameters() {
 }
 
 void Port::updateParameters() {
+	int registerCount;
+
+	modbus_context_mutex->lock();
+	registerCount = modbus_read_registers(*modbus_context.get(), portStartAddress - 1, this->readArraySize, this->readArray);
+	modbus_context_mutex->unlock();
+
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator{this->parameters.begin()};
 	while (parametersIterator != this->parameters.end()) {
-		parametersIterator->get()->updateValue(this->modbus_context, this->modbus_context_mutex, this->portStartAddress);
+		parametersIterator->get()->updateValue(this->readArray, this->readArraySize, registerCount);
 		parametersIterator++;
 	}
 }

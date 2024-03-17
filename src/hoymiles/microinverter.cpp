@@ -29,6 +29,8 @@ void Microinverter::populatePorts() {
 		this->modbus_context_mutex->lock();
 		registerCount = modbus_read_registers(*this->modbus_context.get(), portStartAddress + 0x0021, 1, readArray);
 		this->modbus_context_mutex->unlock();
+
+		break;
 	}
 }
 

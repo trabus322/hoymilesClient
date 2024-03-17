@@ -14,7 +14,7 @@ class PortParameter {
 	uint16_t parameterAddressOffset;
 	int registerSize;
 
-	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
+	virtual void setValueFromRegisters(uint16_t *readArray, int readArraySize);
 
       public:
 	PortParameter(std::string name, uint16_t parameterAddressOffset, int registerSize);
@@ -40,14 +40,14 @@ class PortParameter {
 
 	virtual std::string getOutputValue();
 
-	void updateValue(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress);
+	void updateValue(uint16_t *readArray, int readArraySize, int registerCount);
 };
 
 class PortParameterFloat : virtual public PortParameter {
       protected:
     int decimalPlaces;
 
-    virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
+    virtual void setValueFromRegisters(uint16_t *readArray, int readArraySize);
 
 	  public:
 	PortParameterFloat(std::string name, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
@@ -57,7 +57,7 @@ class PortParameterFloat : virtual public PortParameter {
 
 class PortParameterInt : virtual public PortParameter {
 	  protected:
-	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
+	virtual void setValueFromRegisters(uint16_t *readArray, int readArraySize);
 
 	  public:
 	PortParameterInt(std::string name, uint16_t parameterAddressOffset, int registerSize);

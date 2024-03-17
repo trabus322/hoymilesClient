@@ -19,6 +19,9 @@ class Port {
 
 	uint16_t portStartAddress;
 
+	uint16_t *readArray;
+	int readArraySize;
+
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 
 	void populateParameters();
