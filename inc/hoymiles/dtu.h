@@ -26,6 +26,8 @@ class Dtu {
 
 	void updateMicroinverters();
 
+	void printMicroinverters();
+
 	~Dtu();
 };
 

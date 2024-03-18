@@ -55,6 +55,18 @@ void Port::updateParameters() {
 	while (parametersIterator != this->parameters.end()) {
 		parametersIterator->get()->updateValue(this->modbus_context, this->modbus_context_mutex, this->portStartAddress);
 		parametersIterator++;
-		break;
+	}
+}
+
+void Port::printParameters() {
+	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+
+	if(parametersIterator != this->parameters.end()) {
+		std::cout << "|";
+	}
+
+	while(parametersIterator != this->parameters.end()) {
+		std::cout << " " << parametersIterator->get()->name << ": " << parametersIterator->get()->getOutputValue() << " |";
+		parametersIterator++;
 	}
 }

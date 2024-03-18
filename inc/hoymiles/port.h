@@ -19,14 +19,16 @@ class Port {
 
 	uint16_t portStartAddress;
 
-	std::vector<std::shared_ptr<PortParameter>> parameters;
-
 	void populateParameters();
 
       public:
 	Port(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress);
 
+	std::vector<std::shared_ptr<PortParameter>> parameters;
+
 	void updateParameters();
+
+	void printParameters();
 };
 
 #endif

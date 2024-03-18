@@ -1,4 +1,6 @@
 #include <thread>
+#include <iostream>
+#include <memory>
 
 #include "modbus.h"
 
@@ -25,5 +27,16 @@ void Microinverter::updatePorts() {
 	while(updateThreadsIterator != updateThreads.end()) {
 		updateThreadsIterator->join();
 		updateThreadsIterator++;
+	}
+}
+
+void Microinverter::printPorts() {
+	std::cout << "Microinverter: " << this->serialNumber << std::endl;
+
+	std::vector<Port>::iterator portsIterator = this->ports.begin();
+	while(portsIterator != this->ports.end()) {
+		portsIterator->printParameters();
+		std::cout << std::endl;
+		portsIterator++;
 	}
 }

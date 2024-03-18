@@ -60,7 +60,8 @@ void PortParameterFloat::setValueFromRegisters(uint16_t *readArray, int register
 }
 
 std::string PortParameterFloat::getOutputValue() {
-	return std::to_string(this->value.f);
+	std::string separator{"_age"};
+	return std::to_string(this->value.f).append(separator.append(std::to_string(this->age)));
 }
 
 PortParameterInt::PortParameterInt(std::string name, uint16_t parameterAddressOffset, int registerSize) : PortParameter(name, parameterAddressOffset, registerSize) {
@@ -81,5 +82,6 @@ void PortParameterInt::setValueFromRegisters(uint16_t *readArray, int registerCo
 }
 
 std::string PortParameterInt::getOutputValue() {
-	return std::to_string(this->value.i);
+	std::string separator{"_age"};
+	return std::to_string(this->value.i).append(separator.append(std::to_string(this->age)));
 }

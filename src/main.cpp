@@ -14,13 +14,14 @@ int main(){
     auto startTime = std::chrono::high_resolution_clock::now();
     Dtu dtu {ip_address.c_str(), port};
     auto endTime = std::chrono::high_resolution_clock::now();
-    std::cout << "Construction time: " << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count() << "s" << std::endl;
+    std::cout << "Construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
     while(true) {
         auto startTime = std::chrono::high_resolution_clock::now();
         dtu.updateMicroinverters();
         auto endTime = std::chrono::high_resolution_clock::now();
-        std::cout << "Update time: " << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count() << "s" << std::endl;
+        std::cout << "Update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
+        dtu.printMicroinverters();
     }
 
     return 0;

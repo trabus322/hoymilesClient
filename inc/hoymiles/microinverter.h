@@ -29,6 +29,8 @@ class Microinverter {
 	void updatePort(int i);
 
 	Port getPort(int i);
+
+	void printPorts();
 };
 
 #endif

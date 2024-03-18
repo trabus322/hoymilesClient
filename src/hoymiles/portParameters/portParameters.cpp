@@ -25,6 +25,9 @@ PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumbe
 void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
 	if (registerCount > 0) {
 		this->value.i = readArray[0];
+		std::stringstream valueStringStream;
+		valueStringStream << std::hex << this->value.i;
+		this->value.i = valueStringStream.str().at(0) - '0';
 	}
 }
 

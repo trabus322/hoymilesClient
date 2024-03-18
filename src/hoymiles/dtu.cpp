@@ -84,7 +84,17 @@ void Dtu::updateMicroinverters() {
 
 	std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
 	while(updateThreadsIterator != updateThreads.end()) {
-		updateThreadsIterator->join();
-		updateThreadsIterator++;
+		updateThreadsIterator->join();		updateThreadsIterator++;
+	}
+	std::cout << std::endl;
+}
+
+void Dtu::printMicroinverters() {
+	std::cout << "DTU:" << std::endl;
+	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+	while(microinvertersIterator != this->microinverters.end()) {
+		microinvertersIterator->printPorts();
+		std::cout << std::endl;
+		microinvertersIterator++;
 	}
 }
