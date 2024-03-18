@@ -1,6 +1,7 @@
 #include <cmath>
 #include <string>
 #include <iomanip>
+#include <sstream>
 
 #include "portParameters.h"
 
