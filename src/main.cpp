@@ -17,6 +17,8 @@ int main(){
         dtu.updateMicroinverters();
     }
 
+    // Test commit
+
     // Port hoymilesPort{modbus_new_tcp(ip_address.c_str(), port), 0x1000};
 
     // hoymilesPort.updateParameters();
