@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-
 #include <chrono>
 #include <thread>
 
@@ -12,9 +11,16 @@ int main(){
     std::string ip_address {"192.168.31.136"};
     int port {502};
 
+    auto startTime = std::chrono::high_resolution_clock::now();
     Dtu dtu {ip_address.c_str(), port};
+    auto endTime = std::chrono::high_resolution_clock::now();
+    std::cout << "Construction time: " << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count() << "s" << std::endl;
+
     while(true) {
+        auto startTime = std::chrono::high_resolution_clock::now();
         dtu.updateMicroinverters();
+        auto endTime = std::chrono::high_resolution_clock::now();
+        std::cout << "Update time: " << std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count() << "s" << std::endl;
     }
 
     return 0;
