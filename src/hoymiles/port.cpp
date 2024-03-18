@@ -55,5 +55,6 @@ void Port::updateParameters() {
 	while (parametersIterator != this->parameters.end()) {
 		parametersIterator->get()->updateValue(this->modbus_context, this->modbus_context_mutex, this->portStartAddress);
 		parametersIterator++;
+		break;
 	}
 }

@@ -19,6 +19,8 @@ class Dtu {
 
 	void populateMicroinverters();
 
+	std::pair<bool, Microinverter*> getMicroinverterBySerialNumber(long serialNumber);
+
       public:
 	Dtu(const char *ip_address, int port);
 
