@@ -6,13 +6,17 @@
 // #include <mutex>
 
 #include "microinverter.h"
+#include "modbus.h"
 
-struct _modbus;
-typedef _modbus modbus_t;
+// struct _modbus;
+// typedef _modbus modbus_t;
 
 class Dtu {
       private:
-	std::shared_ptr<modbus_t*> modbus_context;
+	// std::shared_ptr<modbus_t*> modbus_context;
+
+	std::shared_ptr<modbus> modbus;
+
 	// std::mutex modbus_context_mutex;
 
 	std::vector<Microinverter> microinverters;

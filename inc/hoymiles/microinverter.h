@@ -6,19 +6,23 @@
 // #include <mutex>
 
 #include "port.h"
+#include "modbus.h"
 
-struct _modbus;
-typedef _modbus modbus_t;
+// struct _modbus;
+// typedef _modbus modbus_t;
 
 class Microinverter {
       private:
-	std::shared_ptr<modbus_t*> modbus_context;
+	// std::shared_ptr<modbus_t*> modbus_context;
+
+	std::shared_ptr<modbus> modbus;
+
 	// std::mutex *modbus_context_mutex;
 
 	
 
       public:
-	Microinverter(std::shared_ptr<modbus_t*> modbus_context, long serialNumber);
+	Microinverter(class modbus modbus, long serialNumber);
 
 	long serialNumber;
 

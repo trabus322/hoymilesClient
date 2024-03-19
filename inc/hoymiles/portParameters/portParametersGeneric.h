@@ -40,7 +40,7 @@ class PortParameter {
 
 	virtual std::string getOutputValue();
 
-	void updateValue(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress);
+	void updateValue(std::shared_ptr<class modbus> modbus_context, uint16_t portStartAddress);
 };
 
 class PortParameterFloat : virtual public PortParameter {
