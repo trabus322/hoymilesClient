@@ -8,9 +8,6 @@
 
 #include "portParametersGeneric.h"
 
-struct _modbus;
-typedef _modbus modbus_t;
-
 PortParameter::PortParameter(std::string name, uint16_t parameterAddressOffset, int registerSize) {
 	this->name = name;
 
@@ -32,18 +29,19 @@ std::string PortParameter::getOutputValue() {
 	return "yeet";
 }
 
-void PortParameter::updateValue(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress) {
+void PortParameter::updateValue(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
 	uint16_t readArray[this->registerSize];
 	int registerCount;
 	
 	// modbus_context_mutex->lock();
-	registerCount = modbus_read_registers(*modbus_context.get(), portStartAddress + this->parameterAddressOffset, this->registerSize, readArray);
+	registerCount = modbus.get()->modbus_read_holding_registers(portStartAddress + this->parameterAddressOffset, this->registerSize, readArray);
 	// modbus_context_mutex->unlock();
 
-	if(registerCount == -1){
+	if(registerCount != 0){
 		this->age++;
 	}
 	else{
+		registerCount = this->registerSize;
 		this->setValueFromRegisters(readArray, registerCount);
         this->age = 0;
 	}

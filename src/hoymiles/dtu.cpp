@@ -55,7 +55,7 @@ void Dtu::populateMicroinverters() {
 			getMicroinverterBySerialNumber.second->ports.push_back(port);
 		}
 		else {
-			Microinverter microinverter{ this->modbus_context, serialNumber };
+			Microinverter microinverter{ this->modbus, serialNumber };
 			this->microinverters.push_back(microinverter);
 			this->microinverters.back().ports.push_back(port);
 		}
@@ -63,7 +63,7 @@ void Dtu::populateMicroinverters() {
 		portStartAddress += 0x0028;
 
 		// this->modbus_context_mutex.lock();
-		registerCount = modbus_read_registers(*this->modbus_context.get(), portStartAddress + 0x0021, 1, readArray);
+		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0021, 1, readArray);
 		// this->modbus_context_mutex.unlock();
 	}
 }

@@ -7,11 +7,8 @@
 #include "microinverter.h"
 #include "port.h"
 
-struct _modbus;
-typedef _modbus modbus_t;
-
-Microinverter::Microinverter(std::shared_ptr<modbus_t*> modbus_context, long serialNumber) {
-	this->modbus_context = modbus_context;
+Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, long serialNumber) {
+	this->modbus = modbus;
 	// this->modbus_context_mutex = modbus_context_mutex;
 
 	this->serialNumber = serialNumber;

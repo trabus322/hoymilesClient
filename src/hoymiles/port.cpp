@@ -9,8 +9,8 @@
 #include "port.h"
 #include "portParameters.h"
 
-Port::Port(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress) {
-	this->modbus_context = modbus_context;
+Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
+	this->modbus = modbus;
 	// this->modbus_context_mutex = modbus_context_mutex;
 
 	this->portStartAddress = portStartAddress;
@@ -71,7 +71,7 @@ void Port::fixCurrent() {
 void Port::updateParameters() {
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator{this->parameters.begin()};
 	while (parametersIterator != this->parameters.end()) {
-		parametersIterator->get()->updateValue(this->modbus_context, this->portStartAddress);
+		parametersIterator->get()->updateValue(this->modbus, this->portStartAddress);
 		parametersIterator++;
 	}
 	this->fixCurrent();

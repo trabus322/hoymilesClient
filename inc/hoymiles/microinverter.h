@@ -15,14 +15,15 @@ class Microinverter {
       private:
 	// std::shared_ptr<modbus_t*> modbus_context;
 
-	std::shared_ptr<modbus> modbus;
+	std::shared_ptr<class modbus> modbus;
 
 	// std::mutex *modbus_context_mutex;
 
 	
 
       public:
-	Microinverter(class modbus modbus, long serialNumber);
+	Microinverter(
+	std::shared_ptr<class modbus> modbus, long serialNumber);
 
 	long serialNumber;
 
