@@ -21,6 +21,9 @@ class Port {
 
 	void populateParameters();
 
+	void fixCurrent();
+	bool currentFixed;
+
       public:
 	Port(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress);
 
