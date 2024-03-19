@@ -28,7 +28,9 @@ std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueTy
     return std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueType>(this->value, this->valueType);
 }
 
-std::string PortParameter::getOutputValue() {}
+std::string PortParameter::getOutputValue() {
+	return "yeet";
+}
 
 void PortParameter::updateValue(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress) {
 	uint16_t readArray[this->registerSize];
