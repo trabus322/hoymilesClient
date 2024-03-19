@@ -10,9 +10,9 @@
 struct _modbus;
 typedef _modbus modbus_t;
 
-Microinverter::Microinverter(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, long serialNumber) {
+Microinverter::Microinverter(std::shared_ptr<modbus_t*> modbus_context, long serialNumber) {
 	this->modbus_context = modbus_context;
-	this->modbus_context_mutex = modbus_context_mutex;
+	// this->modbus_context_mutex = modbus_context_mutex;
 
 	this->serialNumber = serialNumber;
 }

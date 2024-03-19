@@ -30,13 +30,13 @@ std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueTy
 
 std::string PortParameter::getOutputValue() {}
 
-void PortParameter::updateValue(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress) {
+void PortParameter::updateValue(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress) {
 	uint16_t readArray[this->registerSize];
 	int registerCount;
 	
-	modbus_context_mutex->lock();
+	// modbus_context_mutex->lock();
 	registerCount = modbus_read_registers(*modbus_context.get(), portStartAddress + this->parameterAddressOffset, this->registerSize, readArray);
-	modbus_context_mutex->unlock();
+	// modbus_context_mutex->unlock();
 
 	if(registerCount == -1){
 		this->age++;

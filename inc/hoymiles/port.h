@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <mutex>
+// #include <mutex>
 
 #include "portParametersGeneric.h"
 
@@ -15,7 +15,7 @@ typedef _modbus modbus_t;
 class Port {
       private:
 	std::shared_ptr<modbus_t*> modbus_context;
-	std::mutex *modbus_context_mutex;
+	// std::mutex *modbus_context_mutex;
 
 	uint16_t portStartAddress;
 
@@ -25,7 +25,7 @@ class Port {
 	bool currentFixed;
 
       public:
-	Port(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, uint16_t portStartAddress);
+	Port(std::shared_ptr<modbus_t*> modbus_context, uint16_t portStartAddress);
 
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 

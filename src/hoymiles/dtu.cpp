@@ -17,7 +17,6 @@ Dtu::Dtu(const char *ip_address, int port) {
 
 	if (modbus_connect(*this->modbus_context.get()) == -1) {
 		std::cerr << "conn_error";
-		modbus_free(*this->modbus_context.get());
 		this->connected = false;
 	}
 	else {
@@ -45,10 +44,10 @@ void Dtu::populateMicroinverters() {
 	int registerCount;
 	registerCount = modbus_read_registers(*this->modbus_context.get(), portStartAddress + 0x0021, 1, readArray);
 	while(registerCount != -1 && readArray[0] == 0x700) {
-		Port port{ this->modbus_context, &this->modbus_context_mutex, portStartAddress };
+		Port port{ this->modbus_context, portStartAddress };
 
 		PortParameterMicroinverterSerialNumber portParameterMicroinverterSerialNumber{};
-		portParameterMicroinverterSerialNumber.updateValue(this->modbus_context, &this->modbus_context_mutex, portStartAddress);
+		portParameterMicroinverterSerialNumber.updateValue(this->modbus_context, portStartAddress);
 		long serialNumber = portParameterMicroinverterSerialNumber.getValue().first.i;
 
 		std::pair<bool, Microinverter*> getMicroinverterBySerialNumber = this->getMicroinverterBySerialNumber(serialNumber);
@@ -56,16 +55,16 @@ void Dtu::populateMicroinverters() {
 			getMicroinverterBySerialNumber.second->ports.push_back(port);
 		}
 		else {
-			Microinverter microinverter{ this->modbus_context, &this->modbus_context_mutex, serialNumber };
+			Microinverter microinverter{ this->modbus_context, serialNumber };
 			this->microinverters.push_back(microinverter);
 			this->microinverters.back().ports.push_back(port);
 		}
 
 		portStartAddress += 0x0028;
 
-		this->modbus_context_mutex.lock();
+		// this->modbus_context_mutex.lock();
 		registerCount = modbus_read_registers(*this->modbus_context.get(), portStartAddress + 0x0021, 1, readArray);
-		this->modbus_context_mutex.unlock();
+		// this->modbus_context_mutex.unlock();
 	}
 }
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include <mutex>
+// #include <mutex>
 
 #include "port.h"
 
@@ -13,12 +13,12 @@ typedef _modbus modbus_t;
 class Microinverter {
       private:
 	std::shared_ptr<modbus_t*> modbus_context;
-	std::mutex *modbus_context_mutex;
+	// std::mutex *modbus_context_mutex;
 
 	
 
       public:
-	Microinverter(std::shared_ptr<modbus_t*> modbus_context, std::mutex *modbus_context_mutex, long serialNumber);
+	Microinverter(std::shared_ptr<modbus_t*> modbus_context, long serialNumber);
 
 	long serialNumber;
 
