@@ -33,9 +33,9 @@ void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int reg
 
 PortParameterPvVoltage::PortParameterPvVoltage() : PortParameterFloat("pvVoltage", 1, 0x0008, 2), PortParameter("pvVoltage", 0x0008, 2) {}
 
-PortParameterPvCurrentMi::PortParameterPvCurrentMi() : PortParameterFloat("pvCurrent", 1, 0x000a, 2), PortParameter("pvCurrent", 0x000a, 2) {}
+PortParameterPvCurrentMi::PortParameterPvCurrentMi() : PortParameterFloat("pvCurrentMI", 1, 0x000a, 2), PortParameter("pvCurrentMI", 0x000a, 2) {}
 
-PortParameterPvCurrentHm::PortParameterPvCurrentHm() : PortParameterFloat("pvCurrent", 2, 0x000a, 2), PortParameter("pvCurrent", 0x000a, 2) {}
+PortParameterPvCurrentHm::PortParameterPvCurrentHm() : PortParameterFloat("pvCurrentHM", 2, 0x000a, 2), PortParameter("pvCurrentHM", 0x000a, 2) {}
 
 PortParameterGridVoltage::PortParameterGridVoltage() : PortParameterFloat("gridVoltage", 1, 0x000c, 2), PortParameter("gridVoltage", 0x000c, 2) {}
 
