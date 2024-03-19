@@ -56,6 +56,9 @@ void Port::fixCurrent() {
 	if(this->currentFixed) {
 		return;
 	}
+	if(this->parameters.size() < 8) {
+		return;
+	}
 	if(this->parameters.at(7).get()->getValue().first.f == 0) {
 		return;
 	}
