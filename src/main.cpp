@@ -16,7 +16,7 @@ int main(){
     auto endTime = std::chrono::high_resolution_clock::now();
     std::cout << "Construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-    while(true) {
+    while(dtu.isConnected()) {
         auto startTime = std::chrono::high_resolution_clock::now();
         dtu.updateMicroinverters();
         auto endTime = std::chrono::high_resolution_clock::now();

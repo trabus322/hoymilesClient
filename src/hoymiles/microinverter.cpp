@@ -1,4 +1,4 @@
-#include <thread>
+// #include <thread>
 #include <iostream>
 #include <memory>
 
@@ -18,16 +18,16 @@ Microinverter::Microinverter(std::shared_ptr<modbus_t*> modbus_context, std::mut
 }
 
 void Microinverter::updatePorts() {
-	std::vector<std::thread> updateThreads;
+	// std::vector<std::thread> updateThreads;
 	for(Port port : this->ports){
-		updateThreads.push_back(std::thread(&Port::updateParameters, port));
-		// port.updateParameters();
+		// updateThreads.push_back(std::thread(&Port::updateParameters, port));
+		port.updateParameters();
 	}
-	std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
-	while(updateThreadsIterator != updateThreads.end()) {
-		updateThreadsIterator->join();
-		updateThreadsIterator++;
-	}
+	// std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
+	// while(updateThreadsIterator != updateThreads.end()) {
+	// 	updateThreadsIterator->join();
+	// 	updateThreadsIterator++;
+	// }
 }
 
 void Microinverter::printPorts() {

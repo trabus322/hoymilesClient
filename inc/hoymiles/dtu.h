@@ -17,12 +17,16 @@ class Dtu {
 
 	std::vector<Microinverter> microinverters;
 
+	bool connected;
+
 	void populateMicroinverters();
 
 	std::pair<bool, Microinverter*> getMicroinverterBySerialNumber(long serialNumber);
 
       public:
 	Dtu(const char *ip_address, int port);
+
+	bool isConnected();
 
 	void updateMicroinverters();
 

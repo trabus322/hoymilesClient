@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-#include <thread>
+// #include <thread>
 
 #include "modbus.h"
 
@@ -18,10 +18,19 @@ Dtu::Dtu(const char *ip_address, int port) {
 	if (modbus_connect(*this->modbus_context.get()) == -1) {
 		std::cerr << "conn_error";
 		modbus_free(*this->modbus_context.get());
-		abort();
+		this->connected = false;
+	}
+	else {
+		this->connected = true;
 	}
 
-	this->populateMicroinverters();
+	if(this->connected) {
+		this->populateMicroinverters();
+	}
+}
+
+bool Dtu::isConnected() {
+	return this->connected;
 }
 
 Dtu::~Dtu() {
@@ -74,19 +83,20 @@ std::pair<bool, Microinverter*> Dtu::getMicroinverterBySerialNumber(long serialN
 }
 
 void Dtu::updateMicroinverters() {
-	std::vector<std::thread> updateThreads;
+	// std::vector<std::thread> updateThreads;
 
 	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
 	while (microinvertersIterator != this->microinverters.end()) {
-		updateThreads.push_back(std::thread(&Microinverter::updatePorts, microinvertersIterator));
+		// updateThreads.push_back(std::thread(&Microinverter::updatePorts, microinvertersIterator));
+		microinvertersIterator->updatePorts();
 		microinvertersIterator++;
 	}
 
-	std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
-	while(updateThreadsIterator != updateThreads.end()) {
-		updateThreadsIterator->join();		updateThreadsIterator++;
-	}
-	std::cout << std::endl;
+	// std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
+	// while(updateThreadsIterator != updateThreads.end()) {
+	// 	updateThreadsIterator->join();		updateThreadsIterator++;
+	// }
+	// std::cout << std::endl;
 }
 
 void Dtu::printMicroinverters() {
