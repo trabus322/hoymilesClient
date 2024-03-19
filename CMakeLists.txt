@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6.0)
 project(hoymilesClient VERSION 0.1.0 LANGUAGES C CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 include_directories(inc inc/libmodbus inc/hoymiles inc/hoymiles/portParameters)
 
@@ -10,3 +10,8 @@ file(GLOB SOURCES src/*.cpp src/libmodbus/*.c src/hoymiles/*.cpp src/hoymiles/po
 add_executable(hoymilesClient_exec ${SOURCES})
 
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/inc/libmodbus/config.h)
+
+# if(WIN32)
+    # find_library(ws2_32_library NAMES libws2_32.a HINTS /usr/x86_64-w64-mingw32/lib)
+    target_link_libraries(hoymilesClient_exec "/usr/x86_64-w64-mingw32/lib/libws2_32.a")
+# endif(WIN32)
