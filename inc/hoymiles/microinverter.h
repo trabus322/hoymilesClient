@@ -21,7 +21,7 @@ class Microinverter {
 
 	void updatePorts(std::vector<std::string> &parametersToGet, bool allParameters);
 
-	void printPorts(std::vector<std::string> &parametersToGet, bool allParameters);
+	void printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 
 	long long getTodayProduction();
 

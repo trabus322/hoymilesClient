@@ -113,7 +113,7 @@ void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allP
 	}
 }
 
-void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
+void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
 	if (allParameters && parametersToGet.size() < this->parameters.size()) {
 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 		while (parametersIterator != this->parameters.end()) {
@@ -134,7 +134,14 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 
 		parameterPair = this->getParameterByName(*parametersToGetIterator);
 		if (parameterPair.second) {
-			std::cout << " " << parameterPair.first->name << ": " << parameterPair.first->getOutputValue() << " |";
+			std::cout << " ";
+			if(shortNames) {
+				std::cout << parameterPair.first->shortName;
+			}
+			else {
+				std::cout << parameterPair.first->name;
+			}
+			std::cout << ": " << parameterPair.first->getOutputValue() << " |";
 		}
 		parametersToGetIterator++;
 	}

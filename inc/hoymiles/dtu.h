@@ -31,7 +31,7 @@ class Dtu {
 
 	// void printMicroinverters();
 
-	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet);
+	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames);
 
 	~Dtu();
 };

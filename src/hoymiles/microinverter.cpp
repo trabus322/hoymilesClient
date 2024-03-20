@@ -20,12 +20,12 @@ void Microinverter::updatePorts(std::vector<std::string> &parametersToGet, bool 
 	}
 }
 
-void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool allParameters) {
+void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
 	std::cout << "Microinverter: " << this->serialNumber << std::endl;
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while (portsIterator != this->ports.end()) {
-		portsIterator->printParameters(parametersToGet, allParameters);
+		portsIterator->printParameters(parametersToGet, allParameters, shortNames);
 		std::cout << std::endl;
 		portsIterator++;
 	}

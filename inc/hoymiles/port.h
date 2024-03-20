@@ -28,7 +28,7 @@ class Port {
 
 	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 
-	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters);
+	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 };
 
 #endif
