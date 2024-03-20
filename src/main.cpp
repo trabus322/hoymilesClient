@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	// signal(SIGBREAK, &handler);
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
-	signal(SIGQUIT, sigHandler);
+	// signal(SIGQUIT, sigHandler);
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
