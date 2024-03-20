@@ -15,7 +15,7 @@ class Dtu {
       private:
 	// std::shared_ptr<modbus_t*> modbus_context;
 
-	std::shared_ptr<modbus> modbus;
+	std::shared_ptr<class modbus> modbus;
 
 	// std::mutex modbus_context_mutex;
 
