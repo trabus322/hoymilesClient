@@ -11,7 +11,7 @@ add_executable(hoymilesClient_exec ${SOURCES})
 
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/inc/libmodbus/config.h)
 
-# if(WIN32)
+if(WIN32)
     # find_library(ws2_32_library NAMES libws2_32.a HINTS /usr/x86_64-w64-mingw32/lib)
     target_link_libraries(hoymilesClient_exec "/usr/x86_64-w64-mingw32/lib/libws2_32.a")
-# endif(WIN32)
+endif(WIN32)
