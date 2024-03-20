@@ -3,13 +3,24 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "CLI11.hpp"
 #include "modbus.h"
 
 #include "dtu.h"
 
+void sigHandler(int signal);
+
 int main(int argc, char **argv) {
+	signal(SIGINT, sigHandler);
+	// signal(SIGBREAK, &handler);
+	signal(SIGTERM, sigHandler);
+	signal(SIGABRT, sigHandler);
+	signal(SIGQUIT, sigHandler);
+
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
 	std::string ipAddress{"127.0.0.1"};
@@ -59,4 +70,9 @@ int main(int argc, char **argv) {
 	}
 
 	return 0;
+}
+
+void sigHandler(int signal) {
+	printf("Interrupted\n");
+	exit(0);
 }
