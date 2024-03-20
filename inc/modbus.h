@@ -37,7 +37,7 @@
 #include <winsock2.h>
 #pragma comment(lib, "Ws2_32.lib")
 using X_SOCKET = SOCKET;
-// using ssize_t = int;
+using ssize_t = int;
 
 #define X_ISVALIDSOCKET(s) ((s) != INVALID_SOCKET)
 #define X_CLOSE_SOCKET(s) closesocket(s)
