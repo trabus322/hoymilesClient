@@ -4,21 +4,13 @@
 #include <vector>
 #include <memory>
 #include <string>
-// #include <mutex>
 
 #include "microinverter.h"
 #include "modbus.h"
 
-// struct _modbus;
-// typedef _modbus modbus_t;
-
 class Dtu {
       private:
-	// std::shared_ptr<modbus_t*> modbus_context;
-
 	std::shared_ptr<class modbus> modbus;
-
-	// std::mutex modbus_context_mutex;
 
 	std::vector<Microinverter> microinverters;
 
@@ -33,13 +25,13 @@ class Dtu {
 
 	bool isConnected();
 
-	void updateMicroinverters();
+	// void updateMicroinverters();
 
-	void updateMicroinverters(std::vector<std::string> &parametersToGet);
+	void updateMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long> &microinvertersToGet);
 
-	void printMicroinverters();
+	// void printMicroinverters();
 
-	void printMicroinverters(std::vector<std::string> &parametersToGet);
+	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long> &microinvertersToGet);
 
 	~Dtu();
 };

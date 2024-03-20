@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 #include "modbus.h"
 
@@ -60,6 +61,7 @@ std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::st
 			result.first = *parametersIterator;
 			result.second = true;
 		}
+		parametersIterator++;
 	}
 
 	return result;
@@ -84,16 +86,17 @@ void Port::fixCurrent() {
 	this->currentFixed = true;
 }
 
-void Port::updateParameters() {
-	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator{this->parameters.begin()};
-	while (parametersIterator != this->parameters.end()) {
-		parametersIterator->get()->updateValue(this->modbus, this->portStartAddress);
-		parametersIterator++;
+void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
+	if(allParameters && parametersToGet.size() < this->parameters.size()) {
+		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+		while(parametersIterator != this->parameters.end()) {
+			if(std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) == parametersToGet.end()) {
+				parametersToGet.push_back(parametersIterator->get()->name);
+			}
+			parametersIterator++;
+		}
 	}
-	this->fixCurrent();
-}
 
-void Port::updateParameters(std::vector<std::string> &parametersToGet) {
 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
 	while(parametersToGetIterator != parametersToGet.end()) {
 		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
@@ -102,27 +105,22 @@ void Port::updateParameters(std::vector<std::string> &parametersToGet) {
 		if(parameterPair.second) {
 			parameterPair.first->updateValue(this->modbus, this->portStartAddress);
 		}
-
 		parametersToGetIterator++;
 	}
 }
 
-void Port::printParameters() {
-	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-
-	if(parametersIterator != this->parameters.end()) {
-		std::cout << "|";
+void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
+	if(allParameters && parametersToGet.size() < this->parameters.size()) {
+		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+		while(parametersIterator != this->parameters.end()) {
+			if(std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) != parametersToGet.end()) {
+				parametersToGet.push_back(parametersIterator->get()->name);
+			}
+			parametersIterator++;
+		}
 	}
 
-	while(parametersIterator != this->parameters.end()) {
-		std::cout << " " << parametersIterator->get()->name << ": " << parametersIterator->get()->getOutputValue() << " |";
-		parametersIterator++;
-	}
-}
-
-void Port::printParameters(std::vector<std::string> &parametersToGet) {
 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
-
 	if(parametersToGetIterator != parametersToGet.end()) {
 		std::cout << "|";
 	}
@@ -134,6 +132,7 @@ void Port::printParameters(std::vector<std::string> &parametersToGet) {
 		if(parameterPair.second) {
 			std::cout << " " << parameterPair.first->name << ": " << parameterPair.first->getOutputValue() << " |";
 		}
+		parametersToGetIterator++;
 	}
 
 }

@@ -30,17 +30,17 @@ class Microinverter {
 
 	std::vector<Port> ports;
 
-	void updatePorts();
+	// void updatePorts();
 
-	void updatePorts(std::vector<std::string> &parametersToGet);
+	void updatePorts(std::vector<std::string> &parametersToGet, bool allParameters);
 
 	void updatePort(int i);
 
 	Port getPort(int i);
 
-	void printPorts();
+	// void printPorts();
 
-	void printPorts(std::vector<std::string> &parametersToGet);
+	void printPorts(std::vector<std::string> &parametersToGet, bool allParameters);
 };
 
 #endif

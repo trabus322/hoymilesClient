@@ -15,44 +15,20 @@ Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, long serialNu
 	this->serialNumber = serialNumber;
 }
 
-void Microinverter::updatePorts() {
-	// std::vector<std::thread> updateThreads;
-	for(Port port : this->ports){
-		// updateThreads.push_back(std::thread(&Port::updateParameters, port));
-		port.updateParameters();
-	}
-	// std::vector<std::thread>::iterator updateThreadsIterator = updateThreads.begin();
-	// while(updateThreadsIterator != updateThreads.end()) {
-	// 	updateThreadsIterator->join();
-	// 	updateThreadsIterator++;
-	// }
-}
-
-void Microinverter::updatePorts(std::vector<std::string> &parametersToGet) {
+void Microinverter::updatePorts(std::vector<std::string> &parametersToGet, bool allParameters) {
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while(portsIterator != this->ports.end()) {
-		portsIterator->updateParameters(parametersToGet);
+		portsIterator->updateParameters(parametersToGet, allParameters);
 		portsIterator++;
 	}
 }
 
-void Microinverter::printPorts() {
+void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool allParameters) {
 	std::cout << "Microinverter: " << this->serialNumber << std::endl;
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while(portsIterator != this->ports.end()) {
-		portsIterator->printParameters();
-		std::cout << std::endl;
-		portsIterator++;
-	}
-}
-
-void Microinverter::printPorts(std::vector<std::string> &parametersToGet) {
-	std::cout << "Microinverter: " << this->serialNumber << std::endl;
-
-	std::vector<Port>::iterator portsIterator = this->ports.begin();
-	while(portsIterator != this->ports.end()) {
-		portsIterator->printParameters(parametersToGet);
+		portsIterator->printParameters(parametersToGet, allParameters);
 		std::cout << std::endl;
 		portsIterator++;
 	}

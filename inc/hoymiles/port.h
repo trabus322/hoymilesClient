@@ -26,13 +26,13 @@ class Port {
 
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 
-	void updateParameters();
+	// void updateParameters();
 
-	void updateParameters(std::vector<std::string> &parametersToGet);
+	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 
-	void printParameters();
+	// void printParameters();
 
-	void printParameters(std::vector<std::string> &parametersToGet);
+	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 };
 
 #endif

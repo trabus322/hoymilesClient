@@ -10,12 +10,11 @@
 #include "dtu.h"
 
 int main(int argc, char **argv) {
-
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
 	std::string ipAddress{"127.0.0.1"};
 	std::string ipAddressHelp{"ipv4 address of DTU {default: " + ipAddress + "}"};
-	hoymilesClient.add_option<std::string>("-i,--ip_address", ipAddress, ipAddressHelp);
+	hoymilesClient.add_option<std::string>("-i,--ip_address", ipAddress, ipAddressHelp)->required();
 
 	int port{502};
 	std::string portHelp{"Port of DTU {default: " + std::to_string(port) + "}"};
@@ -33,27 +32,30 @@ int main(int argc, char **argv) {
 	std::string ignoreNotConnectedHelp{"Ignore connection errors"};
 	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp);
 
+	std::vector<long> microinvertersToGet{};
+	std::string microinvertersToGetHelp{"List of microinverters to fetch, if omitted all are fetched, delimited by ','"};
+	hoymilesClient.add_option<std::vector<long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',');
+
+	try {
+		hoymilesClient.parse(argc, argv);
+	} catch (const CLI::ParseError &e) {
+		return hoymilesClient.exit(e);
+	}
+
+	std::cout << "Mapping out DTU" << std::endl;
 	auto startTime = std::chrono::high_resolution_clock::now();
 	Dtu dtu{ipAddress.c_str(), port};
 	auto endTime = std::chrono::high_resolution_clock::now();
 	std::cout << "DTU construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-	while (dtu.isConnected() || ignoreNotConnected) {
-		if (allParameters) {
-			startTime = std::chrono::high_resolution_clock::now();
-			dtu.updateMicroinverters();
-			endTime = std::chrono::high_resolution_clock::now();
-			std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
+	while ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)) {
+		startTime = std::chrono::high_resolution_clock::now();
+		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToGet);
+		endTime = std::chrono::high_resolution_clock::now();
+		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-			dtu.printMicroinverters();
-		} else {
-			startTime = std::chrono::high_resolution_clock::now();
-			dtu.updateMicroinverters(parametersToGet);
-			endTime = std::chrono::high_resolution_clock::now();
-			std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
-
-			dtu.printMicroinverters(parametersToGet);
-		}
+		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet);
+		std::cout << std::endl;
 	}
 
 	return 0;
