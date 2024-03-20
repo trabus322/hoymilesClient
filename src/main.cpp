@@ -16,10 +16,8 @@ void sigHandler(int signal);
 
 int main(int argc, char **argv) {
 	signal(SIGINT, sigHandler);
-	// signal(SIGBREAK, &handler);
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
-	// signal(SIGQUIT, sigHandler);
 
 	std::string version{"v1.0"};
 	std::cout << version << std::endl;
