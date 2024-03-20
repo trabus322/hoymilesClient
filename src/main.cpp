@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v1.0sn"};
+	std::string version{"v1.0mt"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
@@ -40,18 +40,26 @@ int main(int argc, char **argv) {
 	std::string allParametersHelp{"Fetch all parameters"};
 	hoymilesClient.add_flag<bool>("-a,--all_parameters", allParameters, allParametersHelp)->group("Parameters");
 
+	bool shortNames = false;
+	std::string shortNamesHelp{"Print short parameter names"};
+	hoymilesClient.add_flag<bool>("-s,--short", shortNames, shortNamesHelp)->group("Parameters");
 
 	std::vector<long long> microinvertersToGet{};
 	std::string microinvertersToGetHelp{"List of microinverters to fetch, delimited by ','; if omitted, all are fetched"};
 	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',')->group("Microinverters");
 
-	bool shortNames = false;
-	std::string shortNamesHelp{"Print short parameter names"};
-	hoymilesClient.add_flag<bool>("-s,--short", shortNames, shortNamesHelp)->group("Parameters");
+	bool microinvertersGetTodayProduction;
+	std::string microinvertersGetTodayProductionHelp{"Show today production for microinverters"};
+	hoymilesClient.add_flag<bool>("-t,--today_production", microinvertersGetTodayProduction, microinvertersGetTodayProductionHelp)->group("Microinverters");
+
+	bool microinvertersGetTotalProduction{};
+	std::string microinvertersGetTotalProductionHelp{"Show total production for microinverters"};
+	hoymilesClient.add_flag<bool>("-T,--total_production", microinvertersGetTotalProduction, microinvertersGetTotalProductionHelp)->group("Microinverters");
 
 	bool ignoreNotConnected = false;
 	std::string ignoreNotConnectedHelp{"Ignore conn_error"};
 	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp)->group("Debug");
+
 
 	try {
 		hoymilesClient.parse(argc, argv);
@@ -71,7 +79,7 @@ int main(int argc, char **argv) {
 		endTime = std::chrono::high_resolution_clock::now();
 		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames);
+		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
 		std::cout << std::endl;
 	}
 

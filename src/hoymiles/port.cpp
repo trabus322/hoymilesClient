@@ -87,7 +87,17 @@ void Port::fixCurrent() {
 	}
 }
 
+void Port::increaseParametersAge() {
+	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+	while(parametersIterator != this->parameters.end()) {
+		parametersIterator->get()->age++;
+		parametersIterator++;
+	}
+}
+
 void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
+	this->increaseParametersAge();
+
 	if (allParameters && parametersToGet.size() < this->parameters.size()) {
 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 		while (parametersIterator != this->parameters.end()) {

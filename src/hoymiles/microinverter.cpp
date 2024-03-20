@@ -21,8 +21,6 @@ void Microinverter::updatePorts(std::vector<std::string> &parametersToGet, bool 
 }
 
 void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
-	std::cout << "Microinverter: " << this->serialNumber << std::endl;
-
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while (portsIterator != this->ports.end()) {
 		portsIterator->printParameters(parametersToGet, allParameters, shortNames);
@@ -36,6 +34,9 @@ long long Microinverter::getTodayProduction() {
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while(portsIterator != this->ports.end()) {
+		if(portsIterator->getParameterByName("todayProduction").first->age > 0) {
+			portsIterator->getParameterByName("todayProduction").first->updateValue(this->modbus, portsIterator->portStartAddress);
+		}
 		result += portsIterator->getParameterByName("todayProduction").first->getValue().first.i;
 		portsIterator++;
 	}
@@ -48,7 +49,11 @@ long long Microinverter::getTotalProduction() {
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while(portsIterator != this->ports.end()) {
+		if(portsIterator->getParameterByName("totalProduction").first->age > 0) {
+			portsIterator->getParameterByName("totalProduction").first->updateValue(this->modbus, portsIterator->portStartAddress);
+		}
 		result += portsIterator->getParameterByName("totalProduction").first->getValue().first.i;
+		portsIterator++;
 		portsIterator++;
 	}
 

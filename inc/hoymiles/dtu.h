@@ -1,9 +1,9 @@
 #ifndef DTU_H
 #define DTU_H
 
-#include <vector>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "microinverter.h"
 #include "modbus.h"
@@ -18,7 +18,7 @@ class Dtu {
 
 	void populateMicroinverters();
 
-	std::pair<bool, Microinverter*> getMicroinverterBySerialNumber(long long serialNumber);
+	std::pair<Microinverter *, bool> getMicroinverterBySerialNumber(long long serialNumber);
 
       public:
 	Dtu(const char *ip_address, int port);
@@ -31,7 +31,7 @@ class Dtu {
 
 	// void printMicroinverters();
 
-	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames);
+	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames, bool printTodayProduction, bool printTotalProduction);
 
 	~Dtu();
 };
