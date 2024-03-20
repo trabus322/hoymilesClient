@@ -19,34 +19,35 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v1.0a"};
+	std::string version{"v1.0h"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
 	std::string ipAddress{"127.0.0.1"};
 	std::string ipAddressHelp{"ipv4 address of DTU {default: " + ipAddress + "}"};
-	hoymilesClient.add_option<std::string>("-i,--ip_address", ipAddress, ipAddressHelp)->required();
+	hoymilesClient.add_option<std::string>("-i,--ip_address", ipAddress, ipAddressHelp)->required()->group("Networking");
 
 	int port{502};
 	std::string portHelp{"Port of DTU {default: " + std::to_string(port) + "}"};
-	hoymilesClient.add_option<int>("-p,--port", port, portHelp);
+	hoymilesClient.add_option<int>("-p,--port", port, portHelp)->group("Networking");
 
 	std::vector<std::string> parametersToGet{};
-	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ',', example[par1,par2,par3]"};
-	hoymilesClient.add_option<std::vector<std::string>>("-P,--parameters", parametersToGet, parametersToGetHelp)->delimiter(',');
+	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ','; possible parameters:\n  - pvVoltage\n  - pvCurrentMI\n  - pvCurrentHM\n  - gridVoltage\n  - gridFrequency\n  - pvPower\n  - todayProduction\n  - totalProduction\n  - temperature\n  - operatingStatus\n  - alarmCode\n  - alarmCount\n  - linkStatus"};
+	hoymilesClient.add_option<std::vector<std::string>>("-P,--parameters", parametersToGet, parametersToGetHelp)->delimiter(',')->group("Parameters");
 
 	bool allParameters = false;
 	std::string allParametersHelp{"Fetch all parameters"};
-	hoymilesClient.add_flag<bool>("-a,--all_parameters", allParameters, allParametersHelp);
+	hoymilesClient.add_flag<bool>("-a,--all_parameters", allParameters, allParametersHelp)->group("Parameters");
 
-	bool ignoreNotConnected = false;
-	std::string ignoreNotConnectedHelp{"Ignore connection errors"};
-	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp);
 
 	std::vector<long long> microinvertersToGet{};
-	std::string microinvertersToGetHelp{"List of microinverters to fetch, if omitted all are fetched, delimited by ','"};
-	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',');
+	std::string microinvertersToGetHelp{"List of microinverters to fetch, delimited by ','; if omitted, all are fetched"};
+	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',')->group("Microinverters");
+
+	bool ignoreNotConnected = false;
+	std::string ignoreNotConnectedHelp{"Ignore conn_error"};
+	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp)->group("Debug");
 
 	try {
 		hoymilesClient.parse(argc, argv);

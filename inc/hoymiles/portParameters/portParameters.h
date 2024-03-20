@@ -4,84 +4,84 @@
 #include "portParametersGeneric.h"
 
 class PortParameterMicroinverterSerialNumber : public PortParameterInt {
-      protected:
-    void setValueFromRegisters(uint16_t *readArray, int registerCount);
+      private:
+	void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
       public:
-    PortParameterMicroinverterSerialNumber();
+	PortParameterMicroinverterSerialNumber();
 };
 
 class PortParameterPortNumber : public PortParameterInt {
       private:
-    void setValueFromRegisters(uint16_t *readArray, int registerCount);
+	void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
       public:
-    PortParameterPortNumber();
+	PortParameterPortNumber();
 };
 
 class PortParameterPvVoltage : public PortParameterFloat {
       public:
-    PortParameterPvVoltage();
+	PortParameterPvVoltage();
 };
 
 class PortParameterPvCurrentMi : public PortParameterFloat {
       public:
-    PortParameterPvCurrentMi();
+	PortParameterPvCurrentMi();
 };
 
 class PortParameterPvCurrentHm : public PortParameterFloat {
       public:
-    PortParameterPvCurrentHm();
+	PortParameterPvCurrentHm();
 };
 
 class PortParameterGridVoltage : public PortParameterFloat {
       public:
-    PortParameterGridVoltage();
+	PortParameterGridVoltage();
 };
 
 class PortParameterGridFrequency : public PortParameterFloat {
       public:
-    PortParameterGridFrequency();
+	PortParameterGridFrequency();
 };
 
 class PortParameterPvPower : public PortParameterFloat {
       public:
-    PortParameterPvPower();
+	PortParameterPvPower();
 };
 
 class PortParameterTodayProduction : public PortParameterInt {
       public:
-    PortParameterTodayProduction();
+	PortParameterTodayProduction();
 };
 
 class PortParameterTotalProduction : public PortParameterInt {
       public:
-    PortParameterTotalProduction();
+	PortParameterTotalProduction();
 };
 
 class PortParameterTemperature : public PortParameterFloat {
       public:
-    PortParameterTemperature();
+	PortParameterTemperature();
 };
 
 class PortParameterOperatingStatus : public PortParameterInt {
       public:
-    PortParameterOperatingStatus();
+	PortParameterOperatingStatus();
 };
 
 class PortParameterAlarmCode : public PortParameterInt {
       public:
-    PortParameterAlarmCode();
+	PortParameterAlarmCode();
 };
 
 class PortParameterAlarmCount : public PortParameterInt {
       public:
-    PortParameterAlarmCount();
+	PortParameterAlarmCount();
 };
 
 class PortParameterLinkStatus : public PortParameterInt {
       public:
-    PortParameterLinkStatus();
+	PortParameterLinkStatus();
 };
 
 #endif

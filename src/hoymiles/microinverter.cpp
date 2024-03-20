@@ -1,4 +1,3 @@
-// #include <thread>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -10,14 +9,12 @@
 
 Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, long long serialNumber) {
 	this->modbus = modbus;
-	// this->modbus_context_mutex = modbus_context_mutex;
-
 	this->serialNumber = serialNumber;
 }
 
 void Microinverter::updatePorts(std::vector<std::string> &parametersToGet, bool allParameters) {
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
-	while(portsIterator != this->ports.end()) {
+	while (portsIterator != this->ports.end()) {
 		portsIterator->updateParameters(parametersToGet, allParameters);
 		portsIterator++;
 	}
@@ -27,9 +24,33 @@ void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool a
 	std::cout << "Microinverter: " << this->serialNumber << std::endl;
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
-	while(portsIterator != this->ports.end()) {
+	while (portsIterator != this->ports.end()) {
 		portsIterator->printParameters(parametersToGet, allParameters);
 		std::cout << std::endl;
 		portsIterator++;
 	}
+}
+
+long long Microinverter::getTodayProduction() {
+	long long result{0};
+
+	std::vector<Port>::iterator portsIterator = this->ports.begin();
+	while(portsIterator != this->ports.end()) {
+		result += portsIterator->getParameterByName("todayProduction").first->getValue().first.i;
+		portsIterator++;
+	}
+
+	return result;	
+}
+
+long long Microinverter::getTotalProduction() {
+	long long result{0};
+
+	std::vector<Port>::iterator portsIterator = this->ports.begin();
+	while(portsIterator != this->ports.end()) {
+		result += portsIterator->getParameterByName("totalProduction").first->getValue().first.i;
+		portsIterator++;
+	}
+
+	return result;
 }

@@ -77,15 +77,14 @@ void Port::fixCurrent() {
 
 	if (this->getParameterByName("pvVoltage").second && this->getParameterByName("pvPower").second) {
 		if (this->getParameterByName("pvCurrentMI").second && this->getParameterByName("pvCurrentHM").second) {
-			if(this->getParameterByName("pvPower").first->getValue().first.f > this->getParameterByName("pvVoltage").first->getValue().first.f * this->getParameterByName("pvCurrentMI").first->getValue().first.f) {
+			if (this->getParameterByName("pvPower").first->getValue().first.f > this->getParameterByName("pvVoltage").first->getValue().first.f * this->getParameterByName("pvCurrentMI").first->getValue().first.f) {
 				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentHM").first));
-			}
-			else {
+			} else {
 				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentM").first));
 			}
 			this->currentFixed = true;
 		}
-	} 
+	}
 }
 
 void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
@@ -109,7 +108,7 @@ void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allP
 		}
 
 		this->fixCurrent();
-		
+
 		parametersToGetIterator++;
 	}
 }

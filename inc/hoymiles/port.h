@@ -16,8 +16,6 @@ class Port {
 
 	void populateParameters();
 
-	std::pair<std::shared_ptr<PortParameter>, bool> getParameterByName(std::string name);
-
 	void fixCurrent();
 	bool currentFixed;
 
@@ -26,11 +24,9 @@ class Port {
 
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 
-	// void updateParameters();
+	std::pair<std::shared_ptr<PortParameter>, bool> getParameterByName(std::string name);
 
 	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
-
-	// void printParameters();
 
 	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 };

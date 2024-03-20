@@ -1,6 +1,6 @@
-#include <vector>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "modbus.h"
 
@@ -9,31 +9,27 @@
 
 #include "portParameters.h"
 
-
 Dtu::Dtu(const char *ip_address, int port) {
-	class modbus modbus{ip_address, (uint16_t) port};
+	class modbus modbus {
+		ip_address, (uint16_t)port
+	};
 	this->modbus = std::make_shared<class modbus>(modbus);
 
 	if (!this->modbus.get()->modbus_connect()) {
 		std::cerr << "conn_error" << std::endl;
 		this->connected = false;
-	}
-	else {
+	} else {
 		this->connected = true;
 	}
 
-	if(this->connected) {
+	if (this->connected) {
 		this->populateMicroinverters();
 	}
 }
 
-bool Dtu::isConnected() {
-	return this->connected;
-}
+bool Dtu::isConnected() { return this->connected; }
 
-Dtu::~Dtu() {
-	this->modbus.get()->modbus_close();
-}
+Dtu::~Dtu() { this->modbus.get()->modbus_close(); }
 
 void Dtu::populateMicroinverters() {
 	uint16_t portStartAddress = 0x1000;
@@ -41,19 +37,18 @@ void Dtu::populateMicroinverters() {
 
 	int registerCount;
 	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0021, 1, readArray);
-	while(registerCount != -1 && readArray[0] == 0x700) {
-		Port port{ this->modbus, portStartAddress };
+	while (registerCount != -1 && readArray[0] == 0x700) {
+		Port port{this->modbus, portStartAddress};
 
 		PortParameterMicroinverterSerialNumber portParameterMicroinverterSerialNumber{};
 		portParameterMicroinverterSerialNumber.updateValue(this->modbus, portStartAddress);
 		long long serialNumber = portParameterMicroinverterSerialNumber.getValue().first.i;
 
-		std::pair<bool, Microinverter*> getMicroinverterBySerialNumber = this->getMicroinverterBySerialNumber(serialNumber);
-		if(getMicroinverterBySerialNumber.first) {
+		std::pair<bool, Microinverter *> getMicroinverterBySerialNumber = this->getMicroinverterBySerialNumber(serialNumber);
+		if (getMicroinverterBySerialNumber.first) {
 			getMicroinverterBySerialNumber.second->ports.push_back(port);
-		}
-		else {
-			Microinverter microinverter{ this->modbus, serialNumber };
+		} else {
+			Microinverter microinverter{this->modbus, serialNumber};
 			this->microinverters.push_back(microinverter);
 			this->microinverters.back().ports.push_back(port);
 		}
@@ -64,32 +59,31 @@ void Dtu::populateMicroinverters() {
 	}
 }
 
-std::pair<bool, Microinverter*> Dtu::getMicroinverterBySerialNumber(long long serialNumber) {
+std::pair<bool, Microinverter *> Dtu::getMicroinverterBySerialNumber(long long serialNumber) {
 	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
-	while(microinvertersIterator != this->microinverters.end()) {
-		if(microinvertersIterator->serialNumber == serialNumber) {
-			return std::pair<bool, Microinverter*>(true, &*microinvertersIterator);
-		}
-		else{
+	while (microinvertersIterator != this->microinverters.end()) {
+		if (microinvertersIterator->serialNumber == serialNumber) {
+			return std::pair<bool, Microinverter *>(true, &*microinvertersIterator);
+		} else {
 			microinvertersIterator++;
 		}
 	}
-	return std::pair<bool, Microinverter*>(false, &*microinvertersIterator);
+	return std::pair<bool, Microinverter *>(false, &*microinvertersIterator);
 }
 
 void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet) {
-	if(microinvertersToGet.empty()) {
+	if (microinvertersToGet.empty()) {
 		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
-		while(microinvertersIterator != this->microinverters.end()) {
+		while (microinvertersIterator != this->microinverters.end()) {
 			microinvertersToGet.push_back(microinvertersIterator->serialNumber);
 			microinvertersIterator++;
 		}
 	}
 
 	std::vector<long long>::iterator microinvertersToGetIterator = microinvertersToGet.begin();
-	while(microinvertersToGetIterator != microinvertersToGet.end()) {
-		std::pair<bool, Microinverter*> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
-		if(microinverterPair.first) {
+	while (microinvertersToGetIterator != microinvertersToGet.end()) {
+		std::pair<bool, Microinverter *> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
+		if (microinverterPair.first) {
 			microinverterPair.second->updatePorts(parametersToGet, allParameters);
 		}
 		microinvertersToGetIterator++;
@@ -97,18 +91,18 @@ void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool a
 }
 
 void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet) {
-	if(microinvertersToGet.empty()) {
+	if (microinvertersToGet.empty()) {
 		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
-		while(microinvertersIterator != this->microinverters.end()) {
+		while (microinvertersIterator != this->microinverters.end()) {
 			microinvertersToGet.push_back(microinvertersIterator->serialNumber);
 			microinvertersIterator++;
 		}
 	}
 
 	std::vector<long long>::iterator microinvertersToGetIterator = microinvertersToGet.begin();
-	while(microinvertersToGetIterator != microinvertersToGet.end()) {
-		std::pair<bool, Microinverter*> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
-		if(microinverterPair.first) {
+	while (microinvertersToGetIterator != microinvertersToGet.end()) {
+		std::pair<bool, Microinverter *> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
+		if (microinverterPair.first) {
 			microinverterPair.second->printPorts(parametersToGet, allParameters);
 		}
 		microinvertersToGetIterator++;

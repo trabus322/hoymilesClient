@@ -1,10 +1,9 @@
 #ifndef PORTPARAMETERSGENERIC_H
 #define PORTPARAMETERSGENERIC_H
 
+#include <memory>
 #include <stdint.h>
 #include <string>
-#include <memory>
-// #include <mutex>
 
 struct _modbus;
 typedef _modbus modbus_t;
@@ -29,7 +28,7 @@ class PortParameter {
 	};
 
       protected:
-    PortParameterValueType valueType;
+	PortParameterValueType valueType;
 	PortParameterValue value;
 
       public:
@@ -45,21 +44,21 @@ class PortParameter {
 
 class PortParameterFloat : virtual public PortParameter {
       protected:
-    int decimalPlaces;
+	int decimalPlaces;
 
-    virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
+	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
-	  public:
+      public:
 	PortParameterFloat(std::string name, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
 };
 
 class PortParameterInt : virtual public PortParameter {
-	  protected:
+      protected:
 	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
-	  public:
+      public:
 	PortParameterInt(std::string name, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
