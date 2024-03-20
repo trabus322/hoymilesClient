@@ -218,7 +218,7 @@ inline bool modbus::modbus_connect()
     }
 
 #ifdef WIN32
-    const DWORD timeout = 20;
+    const DWORD timeout = 20000;
 #else
     struct timeval timeout
     {
