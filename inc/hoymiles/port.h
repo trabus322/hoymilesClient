@@ -12,15 +12,17 @@ class Port {
       private:
 	std::shared_ptr<class modbus> modbus;
 
-	uint16_t portStartAddress;
-
 	void populateParameters();
 
 	void fixCurrent();
 	bool currentFixed;
 
+	void increaseParametersAge();
+
       public:
 	Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress);
+
+	uint16_t portStartAddress;
 
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 
