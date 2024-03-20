@@ -1,8 +1,8 @@
-#include <vector>
-#include <string>
-#include <iostream>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include "modbus.h"
 
@@ -56,8 +56,8 @@ std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::st
 	result.second = false;
 
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-	while(parametersIterator != this->parameters.end() && !result.second) {
-		if(parametersIterator->get()->name == name) {
+	while (parametersIterator != this->parameters.end() && !result.second) {
+		if (parametersIterator->get()->name == name) {
 			result.first = *parametersIterator;
 			result.second = true;
 		}
@@ -68,29 +68,33 @@ std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::st
 }
 
 void Port::fixCurrent() {
-	if(this->currentFixed) {
+	if (this->currentFixed) {
 		return;
 	}
-	if(this->parameters.size() < 8) {
+
+	if (!this->getParameterByName("pvCurrentMI").second != !this->getParameterByName("pvCurrentHM").second) {
+		this->currentFixed = true;
 		return;
 	}
-	if(this->parameters.at(7).get()->getValue().first.f == 0) {
-		return;
-	}
-	if(this->parameters.at(2).get()->getValue().first.f * this->parameters.at(4).get()->getValue().first.f < this->parameters.at(7).get()->getValue().first.f) {
-		this->parameters.erase(this->parameters.begin() + 4);
-	}
-	else {
-		this->parameters.erase(this->parameters.begin() + 3);
-	}
-	this->currentFixed = true;
+
+	if (this->getParameterByName("pvVoltage").second && this->getParameterByName("pvPower").second) {
+		if (this->getParameterByName("pvCurrentMI").second && this->getParameterByName("pvCurrentHM").second) {
+			if(this->getParameterByName("pvPower").first->getValue().first.f > this->getParameterByName("pvVoltage").first->getValue().first.f * this->getParameterByName("pvCurrentMI").first->getValue().first.f) {
+				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentHM").first));
+			}
+			else {
+				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentM").first));
+			}
+			this->currentFixed = true;
+		}
+	} 
 }
 
 void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
-	if(allParameters && parametersToGet.size() < this->parameters.size()) {
+	if (allParameters && parametersToGet.size() < this->parameters.size()) {
 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-		while(parametersIterator != this->parameters.end()) {
-			if(std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) == parametersToGet.end()) {
+		while (parametersIterator != this->parameters.end()) {
+			if (std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) == parametersToGet.end()) {
 				parametersToGet.push_back(parametersIterator->get()->name);
 			}
 			parametersIterator++;
@@ -98,22 +102,25 @@ void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allP
 	}
 
 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
-	while(parametersToGetIterator != parametersToGet.end()) {
+	while (parametersToGetIterator != parametersToGet.end()) {
 		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
-		
+
 		parameterPair = this->getParameterByName(*parametersToGetIterator);
-		if(parameterPair.second) {
+		if (parameterPair.second) {
 			parameterPair.first->updateValue(this->modbus, this->portStartAddress);
 		}
+
+		this->fixCurrent();
+		
 		parametersToGetIterator++;
 	}
 }
 
 void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
-	if(allParameters && parametersToGet.size() < this->parameters.size()) {
+	if (allParameters && parametersToGet.size() < this->parameters.size()) {
 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-		while(parametersIterator != this->parameters.end()) {
-			if(std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) != parametersToGet.end()) {
+		while (parametersIterator != this->parameters.end()) {
+			if (std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) != parametersToGet.end()) {
 				parametersToGet.push_back(parametersIterator->get()->name);
 			}
 			parametersIterator++;
@@ -121,18 +128,17 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 	}
 
 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
-	if(parametersToGetIterator != parametersToGet.end()) {
+	if (parametersToGetIterator != parametersToGet.end()) {
 		std::cout << "|";
 	}
 
-	while(parametersToGetIterator != parametersToGet.end()) {
+	while (parametersToGetIterator != parametersToGet.end()) {
 		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
 
 		parameterPair = this->getParameterByName(*parametersToGetIterator);
-		if(parameterPair.second) {
+		if (parameterPair.second) {
 			std::cout << " " << parameterPair.first->name << ": " << parameterPair.first->getOutputValue() << " |";
 		}
 		parametersToGetIterator++;
 	}
-
 }
