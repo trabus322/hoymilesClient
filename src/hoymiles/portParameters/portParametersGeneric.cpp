@@ -82,7 +82,7 @@ void PortParameterInt::setValueFromRegisters(uint16_t *readArray, int registerCo
 		readValue = readArray[i];
 		readValueString.append(std::to_string(readValue));
 	}
-	this->value.i = std::stol(readValueString);
+	this->value.i = std::stoll(readValueString);
 }
 
 std::string PortParameterInt::getOutputValue() {

@@ -17,7 +17,7 @@ void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *rea
 		readValueStringStream << std::hex << readValue;
 		readValueString.append(readValueStringStream.str());
 	}
-	this->value.i = std::stol(readValueString);
+	this->value.i = std::stoll(readValueString);
 }
 
 PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumber", 0x0007, 1), PortParameter("portNumber", 0x0007, 1) {}

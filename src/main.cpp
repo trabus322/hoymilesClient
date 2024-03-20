@@ -43,9 +43,9 @@ int main(int argc, char **argv) {
 	std::string ignoreNotConnectedHelp{"Ignore connection errors"};
 	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp);
 
-	std::vector<long> microinvertersToGet{};
+	std::vector<long long> microinvertersToGet{};
 	std::string microinvertersToGetHelp{"List of microinverters to fetch, if omitted all are fetched, delimited by ','"};
-	hoymilesClient.add_option<std::vector<long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',');
+	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',');
 
 	try {
 		hoymilesClient.parse(argc, argv);

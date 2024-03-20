@@ -24,7 +24,7 @@ class PortParameter {
 	enum PortParameterValueType { Int, Float };
 
 	union PortParameterValue {
-		long i;
+		long long i;
 		float f;
 	};
 

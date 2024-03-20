@@ -24,9 +24,9 @@ class Microinverter {
 
       public:
 	Microinverter(
-	std::shared_ptr<class modbus> modbus, long serialNumber);
+	std::shared_ptr<class modbus> modbus, long long serialNumber);
 
-	long serialNumber;
+	long long serialNumber;
 
 	std::vector<Port> ports;
 
