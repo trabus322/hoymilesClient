@@ -90,7 +90,7 @@ void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool a
 	}
 }
 
-void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet) {
+void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames) {
 	if (microinvertersToGet.empty()) {
 		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
 		while (microinvertersIterator != this->microinverters.end()) {
@@ -103,7 +103,7 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 	while (microinvertersToGetIterator != microinvertersToGet.end()) {
 		std::pair<bool, Microinverter *> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.first) {
-			microinverterPair.second->printPorts(parametersToGet, allParameters);
+			microinverterPair.second->printPorts(parametersToGet, allParameters, shortNames);
 		}
 		microinvertersToGetIterator++;
 	}

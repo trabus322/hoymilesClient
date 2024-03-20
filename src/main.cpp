@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v1.0h"};
+	std::string version{"v1.0sn"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 	hoymilesClient.add_option<int>("-p,--port", port, portHelp)->group("Networking");
 
 	std::vector<std::string> parametersToGet{};
-	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ','; possible parameters:\n  - pvVoltage\n  - pvCurrentMI\n  - pvCurrentHM\n  - gridVoltage\n  - gridFrequency\n  - pvPower\n  - todayProduction\n  - totalProduction\n  - temperature\n  - operatingStatus\n  - alarmCode\n  - alarmCount\n  - linkStatus"};
+	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ','; possible parameters:\n  - pvVoltage [pvU]\n  - pvCurrentMI [pvIMI]\n  - pvCurrentHM [pvIHM]\n  - gridVoltage [gU]\n  - gridFrequency [gF]\n  - pvPower [gP]\n  - todayProduction [tdP]\n  - totalProduction [ttP]\n  - temperature [t]\n  - operatingStatus [oS]\n  - alarmCode [aC]\n  - alarmCount [aCnt]\n  - linkStatus [lS]"};
 	hoymilesClient.add_option<std::vector<std::string>>("-P,--parameters", parametersToGet, parametersToGetHelp)->delimiter(',')->group("Parameters");
 
 	bool allParameters = false;
@@ -44,6 +44,10 @@ int main(int argc, char **argv) {
 	std::vector<long long> microinvertersToGet{};
 	std::string microinvertersToGetHelp{"List of microinverters to fetch, delimited by ','; if omitted, all are fetched"};
 	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',')->group("Microinverters");
+
+	bool shortNames = false;
+	std::string shortNamesHelp{"Print short parameter names"};
+	hoymilesClient.add_flag<bool>("-s,--short", shortNames, shortNamesHelp)->group("Parameters");
 
 	bool ignoreNotConnected = false;
 	std::string ignoreNotConnectedHelp{"Ignore conn_error"};
@@ -67,7 +71,7 @@ int main(int argc, char **argv) {
 		endTime = std::chrono::high_resolution_clock::now();
 		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet);
+		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames);
 		std::cout << std::endl;
 	}
 
