@@ -21,6 +21,9 @@ int main(int argc, char **argv) {
 	signal(SIGABRT, sigHandler);
 	// signal(SIGQUIT, sigHandler);
 
+	std::string version{"v1.0"};
+	std::cout << version << std::endl;
+
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
 	std::string ipAddress{"127.0.0.1"};
