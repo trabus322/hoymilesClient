@@ -20,8 +20,6 @@ Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
 }
 
 void Port::populateParameters() {
-	this->parameters.push_back(std::make_shared<PortParameterMicroinverterSerialNumber>());
-
 	this->parameters.push_back(std::make_shared<PortParameterPortNumber>());
 
 	this->parameters.push_back(std::make_shared<PortParameterPvVoltage>());

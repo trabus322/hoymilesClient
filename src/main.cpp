@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v1.0"};
+	std::string version{"v1.0a"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
@@ -74,6 +74,6 @@ int main(int argc, char **argv) {
 }
 
 void sigHandler(int signal) {
-	printf("Interrupted\n");
+	std::cerr << "Interrupted\n";
 	exit(0);
 }
