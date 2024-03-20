@@ -43,7 +43,7 @@ class PortParameter {
 	void updateValue(std::shared_ptr<class modbus> modubs, uint16_t portStartAddress);
 };
 
-class PortParameterFloat : public PortParameter {
+class PortParameterFloat : virtual public PortParameter {
       protected:
     int decimalPlaces;
 
@@ -55,7 +55,7 @@ class PortParameterFloat : public PortParameter {
 	std::string getOutputValue();
 };
 
-class PortParameterInt : public PortParameter {
+class PortParameterInt : virtual public PortParameter {
 	  protected:
 	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
