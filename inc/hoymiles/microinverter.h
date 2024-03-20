@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 // #include <mutex>
 
 #include "port.h"
@@ -31,11 +32,15 @@ class Microinverter {
 
 	void updatePorts();
 
+	void updatePorts(std::vector<std::string> &parametersToGet);
+
 	void updatePort(int i);
 
 	Port getPort(int i);
 
 	void printPorts();
+
+	void printPorts(std::vector<std::string> &parametersToGet);
 };
 
 #endif

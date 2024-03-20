@@ -4,26 +4,19 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
-#include <memory>
-// #include <mutex>
 
 #include "portParametersGeneric.h"
 #include "modbus.h"
 
-// struct _modbus;
-// typedef _modbus modbus_t;
-
 class Port {
       private:
-	// std::shared_ptr<modbus_t*> modbus_context;
-
 	std::shared_ptr<class modbus> modbus;
-
-	// std::mutex *modbus_context_mutex;
 
 	uint16_t portStartAddress;
 
 	void populateParameters();
+
+	std::pair<std::shared_ptr<PortParameter>, bool> getParameterByName(std::string name);
 
 	void fixCurrent();
 	bool currentFixed;
@@ -35,7 +28,11 @@ class Port {
 
 	void updateParameters();
 
+	void updateParameters(std::vector<std::string> &parametersToGet);
+
 	void printParameters();
+
+	void printParameters(std::vector<std::string> &parametersToGet);
 };
 
 #endif

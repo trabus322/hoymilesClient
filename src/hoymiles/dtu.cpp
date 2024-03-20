@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-// #include <thread>
+#include <string>
 
 #include "modbus.h"
 
@@ -9,15 +9,13 @@
 
 #include "portParameters.h"
 
-// struct _modbus;
-// typedef _modbus modbus_t;
 
 Dtu::Dtu(const char *ip_address, int port) {
 	class modbus modbus{ip_address, (uint16_t) port};
 	this->modbus = std::make_shared<class modbus>(modbus);
 
 	if (!this->modbus.get()->modbus_connect()) {
-		std::cerr << "conn_error";
+		std::cerr << "conn_error" << std::endl;
 		this->connected = false;
 	}
 	else {
@@ -98,12 +96,29 @@ void Dtu::updateMicroinverters() {
 	// std::cout << std::endl;
 }
 
+void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet) {
+	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+	while(microinvertersIterator != this->microinverters.end()) {
+		microinvertersIterator->updatePorts(parametersToGet);
+		microinvertersIterator++;
+	}
+}
+
 void Dtu::printMicroinverters() {
 	std::cout << "DTU:" << std::endl;
 	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
 	while(microinvertersIterator != this->microinverters.end()) {
 		microinvertersIterator->printPorts();
 		std::cout << std::endl;
+		microinvertersIterator++;
+	}
+}
+
+void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet) {
+	std::cout << "DTU:" << std::endl;
+	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+	while(microinvertersIterator != this->microinverters.end()) {
+		microinvertersIterator->printPorts(parametersToGet);
 		microinvertersIterator++;
 	}
 }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 // #include <mutex>
 
 #include "microinverter.h"
@@ -34,7 +35,11 @@ class Dtu {
 
 	void updateMicroinverters();
 
+	void updateMicroinverters(std::vector<std::string> &parametersToGet);
+
 	void printMicroinverters();
+
+	void printMicroinverters(std::vector<std::string> &parametersToGet);
 
 	~Dtu();
 };

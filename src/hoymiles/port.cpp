@@ -2,7 +2,6 @@
 #include <string>
 #include <iostream>
 #include <cmath>
-#include <memory>
 
 #include "modbus.h"
 
@@ -11,7 +10,6 @@
 
 Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
 	this->modbus = modbus;
-	// this->modbus_context_mutex = modbus_context_mutex;
 
 	this->portStartAddress = portStartAddress;
 
@@ -52,6 +50,21 @@ void Port::populateParameters() {
 	this->parameters.push_back(std::make_shared<PortParameterLinkStatus>());
 }
 
+std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::string name) {
+	std::pair<std::shared_ptr<PortParameter>, bool> result;
+	result.second = false;
+
+	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+	while(parametersIterator != this->parameters.end() && !result.second) {
+		if(parametersIterator->get()->name == name) {
+			result.first = *parametersIterator;
+			result.second = true;
+		}
+	}
+
+	return result;
+}
+
 void Port::fixCurrent() {
 	if(this->currentFixed) {
 		return;
@@ -80,6 +93,20 @@ void Port::updateParameters() {
 	this->fixCurrent();
 }
 
+void Port::updateParameters(std::vector<std::string> &parametersToGet) {
+	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
+	while(parametersToGetIterator != parametersToGet.end()) {
+		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
+		
+		parameterPair = this->getParameterByName(*parametersToGetIterator);
+		if(parameterPair.second) {
+			parameterPair.first->updateValue(this->modbus, this->portStartAddress);
+		}
+
+		parametersToGetIterator++;
+	}
+}
+
 void Port::printParameters() {
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 
@@ -91,4 +118,22 @@ void Port::printParameters() {
 		std::cout << " " << parametersIterator->get()->name << ": " << parametersIterator->get()->getOutputValue() << " |";
 		parametersIterator++;
 	}
+}
+
+void Port::printParameters(std::vector<std::string> &parametersToGet) {
+	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
+
+	if(parametersToGetIterator != parametersToGet.end()) {
+		std::cout << "|";
+	}
+
+	while(parametersToGetIterator != parametersToGet.end()) {
+		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
+
+		parameterPair = this->getParameterByName(*parametersToGetIterator);
+		if(parameterPair.second) {
+			std::cout << " " << parameterPair.first->name << ": " << parameterPair.first->getOutputValue() << " |";
+		}
+	}
+
 }
