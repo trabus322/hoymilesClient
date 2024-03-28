@@ -7,29 +7,17 @@
 
 PortParameterMicroinverterSerialNumber::PortParameterMicroinverterSerialNumber() : PortParameterInt("microinverterSerialNumber", "mSN", 0x0001, 6) {}
 
-void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
-	uint16_t readValue;
+void PortParameterMicroinverterSerialNumber::setValueFromRegisters(uint8_t *registers, int addressOffset) {
 	std::string readValueString = "";
-	registerCount = std::ceil(registerCount/2);
-	for (int i{0}; i < registerCount; i++) {
-		readValue = readArray[i];
+	for (int i{0}; i < this->registerSize; i++) {
 		std::stringstream readValueStringStream;
-		readValueStringStream << std::hex << readValue;
+		readValueStringStream << std::hex << (int) registers[addressOffset + this->parameterAddressOffset + i];
 		readValueString.append(readValueStringStream.str());
 	}
 	this->value.i = std::stoll(readValueString);
 }
 
 PortParameterPortNumber::PortParameterPortNumber() : PortParameterInt("portNumber", "pN", 0x0007, 1) {}
-
-void PortParameterPortNumber::setValueFromRegisters(uint16_t *readArray, int registerCount) {
-	if (registerCount > 0) {
-		this->value.i = readArray[0];
-		std::stringstream valueStringStream;
-		valueStringStream << std::hex << this->value.i;
-		this->value.i = valueStringStream.str().at(0) - '0';
-	}
-}
 
 PortParameterPvVoltage::PortParameterPvVoltage() : PortParameterFloat("pvVoltage", "pvU", 1, 0x0008, 2) {}
 

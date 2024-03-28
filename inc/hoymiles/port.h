@@ -10,17 +10,15 @@
 
 class Port {
       private:
-	std::shared_ptr<class modbus> modbus;
-
 	void populateParameters();
 
 	void fixCurrent();
 	bool currentFixed;
 
-	void increaseParametersAge();
+	// void increaseParametersAge();
 
       public:
-	Port(std::shared_ptr<class modbus> modbus, int portStartAddress);
+	Port(int portStartAddress);
 
 	int portStartAddress;
 
@@ -28,7 +26,9 @@ class Port {
 
 	std::pair<std::shared_ptr<PortParameter>, bool> getParameterByName(std::string name);
 
-	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
+	// void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
+
+	void setParametersFromMicroinverterArray(uint8_t *registers, int addressOffset);
 
 	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 };

@@ -27,11 +27,7 @@ class Dtu {
 
 	std::string modbusErrorMessage();
 
-	// void updateMicroinverters();
-
 	void updateMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet);
-
-	// void printMicroinverters();
 
 	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames, bool printTodayProduction, bool printTotalProduction);
 

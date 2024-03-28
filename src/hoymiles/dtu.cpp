@@ -34,29 +34,39 @@ Dtu::~Dtu() { this->modbus.get()->modbus_close(); }
 
 void Dtu::populateMicroinverters() {
 	int portStartAddress = 0x1000;
-	uint16_t readArray[20];
+	uint16_t readArrayJoined[20];
+	uint8_t registers[40];
 
 	int registerCount;
-	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0001, 1, readArray);
-	while (registerCount != -1 && readArray[0] == 0x700) {
-		Port port{this->modbus, portStartAddress};
+	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 20, readArrayJoined);
 
-		PortParameterMicroinverterSerialNumber portParameterMicroinverterSerialNumber{};
-		portParameterMicroinverterSerialNumber.updateValue(this->modbus, portStartAddress);
-		long long serialNumber = portParameterMicroinverterSerialNumber.getValue().first.i;
+	if (registerCount != 0) {
+		return;
+	}
 
-		std::pair<Microinverter *, bool> getMicroinverterBySerialNumber = this->getMicroinverterBySerialNumber(serialNumber);
-		if (getMicroinverterBySerialNumber.second) {
-			getMicroinverterBySerialNumber.first->ports.push_back(port);
-		} else {
-			Microinverter microinverter{this->modbus, serialNumber};
-			this->microinverters.push_back(microinverter);
-			this->microinverters.back().ports.push_back(port);
+	while (registerCount == 0) {
+		for (int i{0}; i < 20; i ++) {
+			registers[2 * i] = (readArrayJoined[i] & 0xFF00) >> 8;
+			registers[(2 * i) + 1] = (readArrayJoined[i] & 0x00FF);
 		}
+
+		if(registers[0] != 12) {
+			break;
+		}
+
+		Port port{portStartAddress};
+		port.setParametersFromMicroinverterArray(registers, 0);
+
+		if (!this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).second) {
+			Microinverter microinverter{this->modbus, portStartAddress, port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i};
+			this->microinverters.push_back(microinverter);
+		}
+
+		this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).first->ports.push_back(port);
 
 		portStartAddress += 0x0028;
 
-		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0021, 1, readArray);
+		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 20, readArrayJoined);
 	}
 }
 
@@ -85,7 +95,7 @@ void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool a
 	while (microinvertersToGetIterator != microinvertersToGet.end()) {
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.second) {
-			microinverterPair.first->updatePorts(parametersToGet, allParameters);
+			microinverterPair.first->updateParameters(parametersToGet, allParameters);
 		}
 		microinvertersToGetIterator++;
 	}
@@ -104,14 +114,16 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 	while (microinvertersToGetIterator != microinvertersToGet.end()) {
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.second) {
-			std::cout << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
-			if(printTodayProduction) {
-				std::cout << "TodayProduction: " << microinverterPair.first->getTodayProduction() << std::endl;
+			std::cout << "  " << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
+			std::cout << "  " << "Microinverter Data Age: " << microinverterPair.first->age << std::endl;
+			if (printTodayProduction) {
+				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << std::endl;
 			}
-			if(printTotalProduction) {
-				std::cout << "TotalProduction: " << microinverterPair.first->getTotalProduction() << std::endl;
+			if (printTotalProduction) {
+				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << std::endl;
 			}
 			microinverterPair.first->printPorts(parametersToGet, allParameters, shortNames);
+			std::cout << std::endl;
 		}
 		microinvertersToGetIterator++;
 	}
