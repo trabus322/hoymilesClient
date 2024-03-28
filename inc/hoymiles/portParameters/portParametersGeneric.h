@@ -13,8 +13,6 @@ class PortParameter {
 	uint16_t parameterAddressOffset;
 	int registerSize;
 
-	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
-
       public:
 	PortParameter(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize);
 
@@ -35,35 +33,38 @@ class PortParameter {
 	std::string name;
 	std::string shortName;
 
-	int age;
+	// int age;
 
 	std::pair<PortParameterValue, PortParameterValueType> getValue();
 
 	virtual std::string getOutputValue();
 
-	void updateValue(std::shared_ptr<class modbus> modubs, uint16_t portStartAddress);
+	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
+
+	// void updateValue(std::shared_ptr<class modbus> modubs, uint16_t portStartAddress);
 };
 
 class PortParameterFloat : public PortParameter {
       protected:
 	int decimalPlaces;
 
-	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
-
       public:
 	PortParameterFloat(std::string name, std::string shortName, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
+
+	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
 };
 
 class PortParameterInt : public PortParameter {
       protected:
-	virtual void setValueFromRegisters(uint16_t *readArray, int registerCount);
 
       public:
 	PortParameterInt(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
+
+	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
 };
 
 #endif

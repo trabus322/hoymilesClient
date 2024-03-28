@@ -12,14 +12,20 @@ class Microinverter {
       private:
 	std::shared_ptr<class modbus> modbus;
 
+	int startAddress;
+
       public:
-	Microinverter(std::shared_ptr<class modbus> modbus, long long serialNumber);
+	Microinverter(std::shared_ptr<class modbus> modbus, int startAddress, long long serialNumber);
 
 	long long serialNumber;
 
+	int age;
+
 	std::vector<Port> ports;
 
-	void updatePorts(std::vector<std::string> &parametersToGet, bool allParameters);
+	// void updatePorts(std::vector<std::string> &parametersToGet, bool allParameters);
+
+	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 
 	void printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 

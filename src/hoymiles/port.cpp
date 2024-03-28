@@ -9,9 +9,7 @@
 #include "port.h"
 #include "portParameters.h"
 
-Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
-	this->modbus = modbus;
-
+Port::Port(int portStartAddress) {
 	this->portStartAddress = portStartAddress;
 
 	this->currentFixed = false;
@@ -20,6 +18,8 @@ Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
 }
 
 void Port::populateParameters() {
+	this->parameters.push_back(std::make_shared<PortParameterMicroinverterSerialNumber>());
+
 	this->parameters.push_back(std::make_shared<PortParameterPortNumber>());
 
 	this->parameters.push_back(std::make_shared<PortParameterPvVoltage>());
@@ -87,20 +87,55 @@ void Port::fixCurrent() {
 	}
 }
 
-void Port::increaseParametersAge() {
+// void Port::increaseParametersAge() {
+// 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+// 	while(parametersIterator != this->parameters.end()) {
+// 		parametersIterator->get()->age++;
+// 		parametersIterator++;
+// 	}
+// }
+
+// void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
+// 	this->increaseParametersAge();
+
+// 	if (allParameters && parametersToGet.size() < this->parameters.size()) {
+// 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
+// 		while (parametersIterator != this->parameters.end()) {
+// 			if (std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) == parametersToGet.end()) {
+// 				parametersToGet.push_back(parametersIterator->get()->name);
+// 			}
+// 			parametersIterator++;
+// 		}
+// 	}
+
+// 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
+// 	while (parametersToGetIterator != parametersToGet.end()) {
+// 		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
+
+// 		parameterPair = this->getParameterByName(*parametersToGetIterator);
+// 		if (parameterPair.second) {
+// 			parameterPair.first->updateValue(this->modbus, this->portStartAddress);
+// 		}
+
+// 		this->fixCurrent();
+
+// 		parametersToGetIterator++;
+// 	}
+// }
+
+void Port::setParametersFromMicroinverterArray(uint8_t *registers, int addressOffset) {
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 	while(parametersIterator != this->parameters.end()) {
-		parametersIterator->get()->age++;
+		parametersIterator->get()->setValueFromRegisters(registers, addressOffset);
 		parametersIterator++;
 	}
 }
 
-void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
-	this->increaseParametersAge();
-
+void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
 	if (allParameters && parametersToGet.size() < this->parameters.size()) {
 		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 		while (parametersIterator != this->parameters.end()) {
+			std::string temp{parametersIterator->get()->name};
 			if (std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) == parametersToGet.end()) {
 				parametersToGet.push_back(parametersIterator->get()->name);
 			}
@@ -109,37 +144,15 @@ void Port::updateParameters(std::vector<std::string> &parametersToGet, bool allP
 	}
 
 	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
-	while (parametersToGetIterator != parametersToGet.end()) {
-		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
-
-		parameterPair = this->getParameterByName(*parametersToGetIterator);
-		if (parameterPair.second) {
-			parameterPair.first->updateValue(this->modbus, this->portStartAddress);
-		}
-
-		this->fixCurrent();
-
-		parametersToGetIterator++;
-	}
-}
-
-void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
-	if (allParameters && parametersToGet.size() < this->parameters.size()) {
-		std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-		while (parametersIterator != this->parameters.end()) {
-			if (std::find(parametersToGet.begin(), parametersToGet.end(), parametersIterator->get()->name) != parametersToGet.end()) {
-				parametersToGet.push_back(parametersIterator->get()->name);
-			}
-			parametersIterator++;
-		}
-	}
-
-	std::vector<std::string>::iterator parametersToGetIterator = parametersToGet.begin();
 	if (parametersToGetIterator != parametersToGet.end()) {
-		std::cout << "|";
+		std::cout << "    |";
 	}
 
 	while (parametersToGetIterator != parametersToGet.end()) {
+		if(*parametersToGetIterator == "microinverterSerialNumber") {
+			parametersToGetIterator++;
+			continue;
+		}
 		std::pair<std::shared_ptr<PortParameter>, bool> parameterPair;
 
 		parameterPair = this->getParameterByName(*parametersToGetIterator);
