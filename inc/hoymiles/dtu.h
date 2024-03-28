@@ -14,8 +14,6 @@ class Dtu {
 
 	std::vector<Microinverter> microinverters;
 
-	bool connected;
-
 	void populateMicroinverters();
 
 	std::pair<Microinverter *, bool> getMicroinverterBySerialNumber(long long serialNumber);
@@ -24,6 +22,10 @@ class Dtu {
 	Dtu(const char *ip_address, int port);
 
 	bool isConnected();
+
+	bool modbusError();
+
+	std::string modbusErrorMessage();
 
 	// void updateMicroinverters();
 

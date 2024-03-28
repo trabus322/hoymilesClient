@@ -20,9 +20,9 @@ class Port {
 	void increaseParametersAge();
 
       public:
-	Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress);
+	Port(std::shared_ptr<class modbus> modbus, int portStartAddress);
 
-	uint16_t portStartAddress;
+	int portStartAddress;
 
 	std::vector<std::shared_ptr<PortParameter>> parameters;
 

@@ -9,7 +9,7 @@
 #include "port.h"
 #include "portParameters.h"
 
-Port::Port(std::shared_ptr<class modbus> modbus, uint16_t portStartAddress) {
+Port::Port(std::shared_ptr<class modbus> modbus, int portStartAddress) {
 	this->modbus = modbus;
 
 	this->portStartAddress = portStartAddress;

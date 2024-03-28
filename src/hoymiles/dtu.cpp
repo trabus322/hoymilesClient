@@ -16,27 +16,28 @@ Dtu::Dtu(const char *ip_address, int port) {
 	this->modbus = std::make_shared<class modbus>(modbus);
 
 	if (!this->modbus.get()->modbus_connect()) {
-		std::cerr << "conn_error" << std::endl;
-		this->connected = false;
-	} else {
-		this->connected = true;
+		std::cerr << "NOT CONNECTED" << std::endl;
 	}
 
-	if (this->connected) {
+	if (this->modbus.get()->is_connected()) {
 		this->populateMicroinverters();
 	}
 }
 
-bool Dtu::isConnected() { return this->connected; }
+bool Dtu::isConnected() { return this->modbus.get()->is_connected(); }
+
+bool Dtu::modbusError() { return this->modbus.get()->err; }
+
+std::string Dtu::modbusErrorMessage() { return this->modbus.get()->error_msg; }
 
 Dtu::~Dtu() { this->modbus.get()->modbus_close(); }
 
 void Dtu::populateMicroinverters() {
-	uint16_t portStartAddress = 0x1000;
-	uint16_t readArray[1];
+	int portStartAddress = 0x1000;
+	uint16_t readArray[20];
 
 	int registerCount;
-	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0021, 1, readArray);
+	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress + 0x0001, 1, readArray);
 	while (registerCount != -1 && readArray[0] == 0x700) {
 		Port port{this->modbus, portStartAddress};
 

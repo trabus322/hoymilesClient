@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 	auto endTime = std::chrono::high_resolution_clock::now();
 	std::cout << "DTU construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-	while ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)) {
+	while (!dtu.modbusError() && (dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)) {
 		startTime = std::chrono::high_resolution_clock::now();
 		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToGet);
 		endTime = std::chrono::high_resolution_clock::now();
@@ -81,6 +81,9 @@ int main(int argc, char **argv) {
 
 		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
 		std::cout << std::endl;
+	}
+	if(dtu.modbusError()) {
+		std::cerr << dtu.modbusErrorMessage() << std::endl;
 	}
 
 	return 0;
