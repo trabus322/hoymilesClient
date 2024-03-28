@@ -5,16 +5,13 @@
 
 class PortParameterMicroinverterSerialNumber : public PortParameterInt {
       private:
-	void setValueFromRegisters(uint16_t *readArray, int registerCount);
+	void setValueFromRegisters(uint8_t *registers, int addressOffset);
 
       public:
 	PortParameterMicroinverterSerialNumber();
 };
 
 class PortParameterPortNumber : public PortParameterInt {
-      private:
-	void setValueFromRegisters(uint16_t *readArray, int registerCount);
-
       public:
 	PortParameterPortNumber();
 };
