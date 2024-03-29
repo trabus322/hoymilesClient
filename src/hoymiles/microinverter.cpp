@@ -6,8 +6,9 @@
 
 #include "microinverter.h"
 #include "port.h"
+#include "sunspec.h"
 
-Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, int startAddress, long long serialNumber) {
+Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, int startAddress, long long serialNumber) : sunspec(40000, modbus) {
 	this->modbus = modbus;
 	this->startAddress = startAddress;
 	this->serialNumber = serialNumber;
