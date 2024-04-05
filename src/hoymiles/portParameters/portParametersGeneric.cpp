@@ -8,9 +8,10 @@
 
 #include "portParametersGeneric.h"
 
-PortParameter::PortParameter(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize) {
+PortParameter::PortParameter(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize) {
 	this->name = name;
 	this->shortName = shortName;
+	this->unit = unit;
 
 	this->parameterAddressOffset = parameterAddressOffset;
 	this->registerSize = registerSize;
@@ -20,7 +21,7 @@ PortParameter::PortParameter(std::string name, std::string shortName, uint16_t p
 
 PortParameter::~PortParameter() {}
 
-void PortParameter::setValueFromRegisters(uint8_t *readArray, int portOffset) {}
+void PortParameter::setValueFromRegisters(uint16_t *readArray, int portOffset) {}
 
 std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueType> PortParameter::getValue() {
     return std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueType>(this->value, this->valueType);
@@ -46,7 +47,7 @@ std::string PortParameter::getOutputValue() {
 // 	}
 // }
 
-PortParameterFloat::PortParameterFloat(std::string name, std::string shortName, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize) : PortParameter(name, shortName, parameterAddressOffset, registerSize) {
+PortParameterFloat::PortParameterFloat(std::string name, std::string shortName, std::string unit, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize) : PortParameter(name, shortName, unit, parameterAddressOffset, registerSize) {
 	this->decimalPlaces = decimalPlaces;
 
 	this->valueType = Float;
@@ -54,7 +55,7 @@ PortParameterFloat::PortParameterFloat(std::string name, std::string shortName, 
     this->value.f = 0;
 }
 
-void PortParameterFloat::setValueFromRegisters(uint8_t *registers, int addressOffset) {
+void PortParameterFloat::setValueFromRegisters(uint16_t *registers, int addressOffset) {
 	std::string readValueString{""};
 	for(int i{0}; i<this->registerSize; i++) {
 		std::stringstream readValueStringStream;
@@ -67,16 +68,16 @@ void PortParameterFloat::setValueFromRegisters(uint8_t *registers, int addressOf
 std::string PortParameterFloat::getOutputValue() {
 	std::stringstream valueStringStream;
 	valueStringStream << std::fixed << std::setprecision(this->decimalPlaces) << this->value.f;
-	return valueStringStream.str();
+	return valueStringStream.str().append(this->unit.c_str());
 }
 
-PortParameterInt::PortParameterInt(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize) : PortParameter(name, shortName, parameterAddressOffset, registerSize) {
+PortParameterInt::PortParameterInt(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize) : PortParameter(name, shortName, unit, parameterAddressOffset, registerSize) {
     this->valueType = Int;
 
     this->value.i = 0;
 }
 
-void PortParameterInt::setValueFromRegisters(uint8_t *registers, int addressOffset) {
+void PortParameterInt::setValueFromRegisters(uint16_t *registers, int addressOffset) {
 	std::string readValueString{""};
 	for (int i{0}; i < this->registerSize; i++) {
 		std::stringstream readValueStringStream;
@@ -87,5 +88,5 @@ void PortParameterInt::setValueFromRegisters(uint8_t *registers, int addressOffs
 }
 
 std::string PortParameterInt::getOutputValue() {
-	return std::to_string(this->value.i);
+	return std::to_string(this->value.i).append(this->unit.c_str());
 }

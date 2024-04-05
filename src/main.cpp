@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v2.0"};
+	std::string version{"v2.1"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};

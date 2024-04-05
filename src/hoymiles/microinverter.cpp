@@ -24,25 +24,29 @@ Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, int startAddr
 // }
 
 void Microinverter::updateParameters(std::vector<std::string> &parametersToGet, bool allParameters) {
-	int registersToRead = (this->ports.size() * 40) / 2;
-	uint16_t registersJoined[registersToRead];
-	uint8_t registers[registersToRead*2];
+	int portsRead = 0;
+	while (portsRead < this->ports.size()) {
+		int portsToRead = 0;
+		while (portsToRead * 0x0019 < (128 - 0x0019) && (portsToRead + portsRead) < this->ports.size()) {
+			portsToRead++;
+		}
 
-	int registerCount;
-	registerCount = this->modbus.get()->modbus_read_holding_registers(this->startAddress, registersToRead, registersJoined);
+		int registersToRead = (portsToRead * 0x0019);
+		uint16_t registers[registersToRead];
 
-	if(registerCount != 0) {
-		this->age++;
-		return;
-	}
+		int registerCount;
+		registerCount = this->modbus.get()->modbus_read_holding_registers(this->startAddress + (portsRead * 0x0019), registersToRead, registers);
 
-	for(int i{0}; i<registersToRead; i++) {
-		registers[2 * i] = (registersJoined[i] & 0xFF00) >> 8;
-		registers[(2 * i)+1] = (registersJoined[i] & 0x00FF);
-	}
+		if (registerCount != 0) {
+			this->age++;
+			return;
+		}
 
-	for(int i{0}; i<this->ports.size(); i++) {
-		this->ports.at(i).setParametersFromMicroinverterArray(registers, i * 40);
+		for (int i{0}; i < portsToRead; i++) {
+			this->ports.at(i).setParametersFromMicroinverterArray(registers, i * 0x0019);
+		}
+
+		portsRead += portsToRead;
 	}
 }
 
@@ -59,19 +63,19 @@ long long Microinverter::getTodayProduction() {
 	long long result{0};
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
-	while(portsIterator != this->ports.end()) {
+	while (portsIterator != this->ports.end()) {
 		result += portsIterator->getParameterByName("todayProduction").first.get()->getValue().first.i;
 		portsIterator++;
 	}
 
-	return result;	
+	return result;
 }
 
 long long Microinverter::getTotalProduction() {
 	long long result{0};
 
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
-	while(portsIterator != this->ports.end()) {
+	while (portsIterator != this->ports.end()) {
 		result += portsIterator->getParameterByName("totalProduction").first.get()->getValue().first.i;
 		portsIterator++;
 	}

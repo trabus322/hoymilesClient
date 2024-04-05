@@ -123,7 +123,7 @@ void Port::fixCurrent() {
 // 	}
 // }
 
-void Port::setParametersFromMicroinverterArray(uint8_t *registers, int addressOffset) {
+void Port::setParametersFromMicroinverterArray(uint16_t *registers, int addressOffset) {
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 	while(parametersIterator != this->parameters.end()) {
 		parametersIterator->get()->setValueFromRegisters(registers, addressOffset);
