@@ -5,7 +5,7 @@
 
 class PortParameterMicroinverterSerialNumber : public PortParameterInt {
       private:
-	void setValueFromRegisters(uint16_t *registers, int addressOffset);
+	void getValueFromRegisters(uint16_t *registers, int addressOffset);
 
       public:
 	PortParameterMicroinverterSerialNumber();
@@ -79,6 +79,16 @@ class PortParameterAlarmCount : public PortParameterInt {
 class PortParameterLinkStatus : public PortParameterInt {
       public:
 	PortParameterLinkStatus();
+};
+
+class PortParameterOnOff : public PortParameterInt {
+      public:
+      PortParameterOnOff();
+};
+
+class PortParameterLimitActivePower : public PortParameterInt {
+      public:
+      PortParameterLimitActivePower();
 };
 
 #endif

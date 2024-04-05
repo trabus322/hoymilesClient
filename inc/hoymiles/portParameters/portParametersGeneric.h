@@ -42,9 +42,11 @@ class PortParameter {
 
 	std::pair<PortParameterValue, PortParameterValueType> getValue();
 
+	PortParameter& writeValue(uint16_t value, class modbus& modbus, int portStartAddress);
+
 	virtual std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+	virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 
 	// void updateValue(std::shared_ptr<class modbus> modubs, uint16_t portStartAddress);
 };
@@ -58,7 +60,7 @@ class PortParameterFloat : public PortParameter {
 
 	std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+	virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 class PortParameterInt : public PortParameter {
@@ -69,7 +71,7 @@ class PortParameterInt : public PortParameter {
 
 	std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+	virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 #endif

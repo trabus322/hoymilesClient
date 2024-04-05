@@ -13,6 +13,8 @@ Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, int startAddr
 	this->startAddress = startAddress;
 	this->serialNumber = serialNumber;
 
+	this->statusStartAddress = (((this->startAddress - 0x4000) / 0x0019) * 6) + 0xd006;
+
 	this->age = 0;
 }
 
@@ -50,6 +52,33 @@ void Microinverter::updateParameters(std::vector<std::string> &parametersToGet, 
 	}
 }
 
+void Microinverter::updateStatusParameters() {
+	int portsRead = 0;
+	while (portsRead < this->ports.size()) {
+		int portsToRead = 0;
+		while (portsToRead * 6 < (10 - 6) && (portsToRead + portsRead) < this->ports.size()) {
+			portsToRead++;
+		}
+
+		int registersToRead = (portsToRead * 6);
+		uint16_t registers[registersToRead];
+
+		int registerCount;
+		registerCount = this->modbus.get()->modbus_read_holding_registers(this->statusStartAddress + (portsRead * 6), registersToRead, registers);
+
+		if (registerCount != 0) {
+			this->age++;
+			return;
+		}
+
+		for (int i{0}; i < portsToRead; i++) {
+			this->ports.at(i + portsRead).setStatusesFromMicroinverterArray(registers, i * 6);
+		}
+
+		portsRead += portsToRead;
+	}
+}
+
 void Microinverter::printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {
 	std::vector<Port>::iterator portsIterator = this->ports.begin();
 	while (portsIterator != this->ports.end()) {
@@ -81,4 +110,12 @@ long long Microinverter::getTotalProduction() {
 	}
 
 	return result;
+}
+
+void Microinverter::setStatus(std::vector<std::pair<int, uint16_t>> portsToSet, std::string statusName) {
+	std::vector<std::pair<int, uint16_t>>::iterator portsToSetIterator = portsToSet.begin();
+	while(portsToSetIterator != portsToSet.end()) {
+		this->ports.at(portsToSetIterator->first).getStatusByName(statusName).first.get()->writeValue(portsToSetIterator->second, *this->modbus, this->ports.at(portsToSetIterator->first).statusPortStartAddress);
+		portsToSetIterator++;
+	}
 }

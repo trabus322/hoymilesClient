@@ -90,6 +90,7 @@ void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool a
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.second) {
 			microinverterPair.first->updateParameters(parametersToGet, allParameters);
+			microinverterPair.first->updateStatusParameters();
 		}
 		microinvertersToGetIterator++;
 	}

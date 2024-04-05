@@ -82,12 +82,15 @@ int main(int argc, char **argv) {
 		startTime = std::chrono::high_resolution_clock::now();
 		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToGet);
 		endTime = std::chrono::high_resolution_clock::now();
-		
+
 		std::cout << "Pass time: " << std::put_time(localtime(&now), "%F %T") << std::endl;
 		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
 		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
 		std::cout << std::endl;
+
+		std::vector<std::pair<int, uint16_t>> portsToLimitActivePower{std::pair<int, uint16_t>(0, 69), std::pair<int, uint16_t>(1, 38), std::pair<int, uint16_t>(3, 3)};
+		dtu.getMicroinverterBySerialNumber(138273312349).first->setStatus(portsToLimitActivePower, "limitActivePower");
 	}
 	// if(dtu.modbusError()) {
 	// 	std::cerr << dtu.modbusErrorMessage() << std::endl;

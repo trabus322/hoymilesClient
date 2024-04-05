@@ -17,6 +17,8 @@ class Microinverter {
 
 	int startAddress;
 
+	int statusStartAddress;
+
       public:
 	Microinverter(std::shared_ptr<class modbus> modbus, int startAddress, long long serialNumber);
 
@@ -30,11 +32,15 @@ class Microinverter {
 
 	void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 
+	void updateStatusParameters();
+
 	void printPorts(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 
 	long long getTodayProduction();
 
 	long long getTotalProduction();
+
+	void setStatus(std::vector<std::pair<int, uint16_t>> portsToSet, std::string statusName);
 };
 
 #endif

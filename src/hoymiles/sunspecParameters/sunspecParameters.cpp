@@ -8,7 +8,7 @@ SunspecParameterManufacturer::SunspecParameterManufacturer() : SunspecParameterS
     this->valueType = string32;
 }
 
-void SunspecParameterManufacturer::setValueFromRegisters(uint16_t *registers, int addressOffset) {
+void SunspecParameterManufacturer::getValueFromRegisters(uint16_t *registers, int addressOffset) {
     std::string readValue;
 
     for(int i{0}; i<this->registerSize; i++) {
