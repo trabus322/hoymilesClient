@@ -80,7 +80,7 @@ void Port::fixCurrent() {
 			if (this->getParameterByName("pvPower").first->getValue().first.f > this->getParameterByName("pvVoltage").first->getValue().first.f * this->getParameterByName("pvCurrentMI").first->getValue().first.f) {
 				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentHM").first));
 			} else {
-				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentM").first));
+				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentMI").first));
 			}
 			this->currentFixed = true;
 		}
@@ -129,6 +129,7 @@ void Port::setParametersFromMicroinverterArray(uint16_t *registers, int addressO
 		parametersIterator->get()->setValueFromRegisters(registers, addressOffset);
 		parametersIterator++;
 	}
+	this->fixCurrent();
 }
 
 void Port::printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames) {

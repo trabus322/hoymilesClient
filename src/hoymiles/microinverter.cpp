@@ -43,7 +43,7 @@ void Microinverter::updateParameters(std::vector<std::string> &parametersToGet, 
 		}
 
 		for (int i{0}; i < portsToRead; i++) {
-			this->ports.at(i).setParametersFromMicroinverterArray(registers, i * 0x0019);
+			this->ports.at(i + portsRead).setParametersFromMicroinverterArray(registers, i * 0x0019);
 		}
 
 		portsRead += portsToRead;

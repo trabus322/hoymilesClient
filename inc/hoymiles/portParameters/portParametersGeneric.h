@@ -15,8 +15,11 @@ class PortParameter {
 
 	std::string unit;
 
+	bool r;
+	bool w;
+
       public:
-	PortParameter(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize);
+	PortParameter(std::string name, std::string shortName, std::string unit, bool r, bool w, uint16_t parameterAddressOffset, int registerSize);
 
 	virtual ~PortParameter();
 
@@ -51,7 +54,7 @@ class PortParameterFloat : public PortParameter {
 	int decimalPlaces;
 
       public:
-	PortParameterFloat(std::string name, std::string shortName, std::string unit, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
+	PortParameterFloat(std::string name, std::string shortName, std::string unit, bool r, bool w, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
 
@@ -62,7 +65,7 @@ class PortParameterInt : public PortParameter {
       protected:
 
       public:
-	PortParameterInt(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize);
+	PortParameterInt(std::string name, std::string shortName, std::string unit, bool r, bool w, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
 

@@ -111,10 +111,10 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 			std::cout << "  " << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
 			std::cout << "  " << "Microinverter Data Age: " << microinverterPair.first->age << std::endl;
 			if (printTodayProduction) {
-				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << std::endl;
+				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << "Wh" << std::endl;
 			}
 			if (printTotalProduction) {
-				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << std::endl;
+				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << "Wh" << std::endl;
 			}
 			microinverterPair.first->printPorts(parametersToGet, allParameters, shortNames);
 			std::cout << std::endl;

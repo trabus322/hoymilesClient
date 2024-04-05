@@ -1,11 +1,11 @@
 #include <chrono>
 #include <iostream>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <thread>
 #include <vector>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 #include "CLI11.hpp"
 #include "modbus.h"
@@ -19,10 +19,12 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v2.1"};
+	std::string version{"v2.2w"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
+
+	hoymilesClient.set_version_flag("-v,--version", version);
 
 	std::string ipAddress{"127.0.0.1"};
 	std::string ipAddressHelp{"ipv4 address of DTU {default: " + ipAddress + "}"};
@@ -33,7 +35,8 @@ int main(int argc, char **argv) {
 	hoymilesClient.add_option<int>("-p,--port", port, portHelp)->group("Networking");
 
 	std::vector<std::string> parametersToGet{};
-	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ','; possible parameters:\n  - pvVoltage [pvU]\n  - pvCurrentMI [pvIMI]\n  - pvCurrentHM [pvIHM]\n  - gridVoltage [gU]\n  - gridFrequency [gF]\n  - pvPower [gP]\n  - todayProduction [tdP]\n  - totalProduction [ttP]\n  - temperature [t]\n  - operatingStatus [oS]\n  - alarmCode [aC]\n  - alarmCount [aCnt]\n  - linkStatus [lS]"};
+	std::string parametersToGetHelp{"List of parameters to fetch, delimited by ','; possible parameters:\n  - pvVoltage [pvU]\n  - pvCurrentMI [pvIMI]\n  - pvCurrentHM [pvIHM]\n  - gridVoltage [gU]\n  - gridFrequency [gF]\n  - pvPower [gP]\n  - "
+					"todayProduction [tdP]\n  - totalProduction [ttP]\n  - temperature [t]\n  - operatingStatus [oS]\n  - alarmCode [aC]\n  - alarmCount [aCnt]\n  - linkStatus [lS]"};
 	hoymilesClient.add_option<std::vector<std::string>>("-P,--parameters", parametersToGet, parametersToGetHelp)->delimiter(',')->group("Parameters");
 
 	bool allParameters = false;
@@ -60,7 +63,6 @@ int main(int argc, char **argv) {
 	std::string ignoreNotConnectedHelp{"Ignore conn_error"};
 	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp)->group("Debug");
 
-
 	try {
 		hoymilesClient.parse(argc, argv);
 	} catch (const CLI::ParseError &e) {
@@ -72,11 +74,16 @@ int main(int argc, char **argv) {
 	Dtu dtu{ipAddress.c_str(), port};
 	auto endTime = std::chrono::high_resolution_clock::now();
 	std::cout << "DTU construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
+	std::cout << std::endl << std::endl;
 
 	while ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)) {
+		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
 		startTime = std::chrono::high_resolution_clock::now();
 		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToGet);
 		endTime = std::chrono::high_resolution_clock::now();
+		
+		std::cout << "Pass time: " << std::put_time(localtime(&now), "%F %T") << std::endl;
 		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
 		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
