@@ -28,7 +28,7 @@ class Port {
 
 	// void updateParameters(std::vector<std::string> &parametersToGet, bool allParameters);
 
-	void setParametersFromMicroinverterArray(uint8_t *registers, int addressOffset);
+	void setParametersFromMicroinverterArray(uint16_t *registers, int addressOffset);
 
 	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 };

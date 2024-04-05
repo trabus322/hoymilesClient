@@ -33,23 +33,17 @@ std::string Dtu::modbusErrorMessage() { return this->modbus.get()->error_msg; }
 Dtu::~Dtu() { this->modbus.get()->modbus_close(); }
 
 void Dtu::populateMicroinverters() {
-	int portStartAddress = 0x1000;
-	uint16_t readArrayJoined[20];
-	uint8_t registers[40];
+	int portStartAddress = 0x4000;
+	uint16_t registers[19];
 
 	int registerCount;
-	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 20, readArrayJoined);
+	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 19, registers);
 
 	if (registerCount != 0) {
 		return;
 	}
 
 	while (registerCount == 0) {
-		for (int i{0}; i < 20; i ++) {
-			registers[2 * i] = (readArrayJoined[i] & 0xFF00) >> 8;
-			registers[(2 * i) + 1] = (readArrayJoined[i] & 0x00FF);
-		}
-
 		if(registers[0] != 12) {
 			break;
 		}
@@ -64,9 +58,9 @@ void Dtu::populateMicroinverters() {
 
 		this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).first->ports.push_back(port);
 
-		portStartAddress += 0x0028;
+		portStartAddress += 0x0019;
 
-		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 20, readArrayJoined);
+		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 19, registers);
 	}
 }
 

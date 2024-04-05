@@ -7,10 +7,13 @@
 
 #include "modbus.h"
 #include "port.h"
+#include "sunspec.h"
 
 class Microinverter {
       private:
 	std::shared_ptr<class modbus> modbus;
+
+	Sunspec sunspec;
 
 	int startAddress;
 

@@ -13,8 +13,10 @@ class PortParameter {
 	uint16_t parameterAddressOffset;
 	int registerSize;
 
+	std::string unit;
+
       public:
-	PortParameter(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize);
+	PortParameter(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize);
 
 	virtual ~PortParameter();
 
@@ -39,7 +41,7 @@ class PortParameter {
 
 	virtual std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
+	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
 
 	// void updateValue(std::shared_ptr<class modbus> modubs, uint16_t portStartAddress);
 };
@@ -49,22 +51,22 @@ class PortParameterFloat : public PortParameter {
 	int decimalPlaces;
 
       public:
-	PortParameterFloat(std::string name, std::string shortName, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
+	PortParameterFloat(std::string name, std::string shortName, std::string unit, int decimalPlaces, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
+	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 class PortParameterInt : public PortParameter {
       protected:
 
       public:
-	PortParameterInt(std::string name, std::string shortName, uint16_t parameterAddressOffset, int registerSize);
+	PortParameterInt(std::string name, std::string shortName, std::string unit, uint16_t parameterAddressOffset, int registerSize);
 
 	std::string getOutputValue();
 
-	virtual void setValueFromRegisters(uint8_t *registers, int addressOffset);
+	virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 #endif

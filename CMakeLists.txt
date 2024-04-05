@@ -3,9 +3,9 @@ project(hoymilesClient VERSION 0.1.0 LANGUAGES C CXX)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-include_directories(inc inc/libmodbus inc/hoymiles inc/hoymiles/portParameters)
+include_directories(inc inc/libmodbus inc/hoymiles inc/hoymiles/portParameters inc/hoymiles/sunspecParameters)
 
-file(GLOB SOURCES src/*.cpp src/libmodbus/*.c src/hoymiles/*.cpp src/hoymiles/portParameters/*.cpp)
+file(GLOB SOURCES src/*.cpp src/libmodbus/*.c src/hoymiles/*.cpp src/hoymiles/portParameters/*.cpp src/hoymiles/sunspecParameters/*.cpp)
 
 add_executable(hoymilesClient_exec ${SOURCES})
 

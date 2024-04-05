@@ -5,7 +5,7 @@
 
 class PortParameterMicroinverterSerialNumber : public PortParameterInt {
       private:
-	void setValueFromRegisters(uint8_t *registers, int addressOffset);
+	void setValueFromRegisters(uint16_t *registers, int addressOffset);
 
       public:
 	PortParameterMicroinverterSerialNumber();
