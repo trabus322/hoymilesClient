@@ -50,7 +50,6 @@ void Port::populateParameters() {
 
 	this->parameters.push_back(std::make_shared<PortParameterLinkStatus>());
 
-
 	this->statusParameters.push_back(std::make_shared<PortParameterOnOff>());
 
 	this->statusParameters.push_back(std::make_shared<PortParameterLimitActivePower>());
@@ -199,15 +198,26 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 		}
 		parametersToGetIterator++;
 	}
+
+	std::vector<std::shared_ptr<PortParameter>>::iterator statusesToGetIterator = this->statusParameters.begin();
+	while (statusesToGetIterator != this->statusParameters.end()) {
+			std::cout << " ";
+			if (shortNames) {
+				std::cout << statusesToGetIterator->get()->shortName;
+			} else {
+				std::cout << statusesToGetIterator->get()->name;
+			}
+			std::cout << ": " << statusesToGetIterator->get()->getOutputValue() << " |";
+		statusesToGetIterator++;
+	}
 }
 
 void Port::turnOff(class modbus &modbus) { this->getStatusByName("onOff").first.get()->writeValue(0, modbus, this->statusPortStartAddress); }
 
 bool Port::isOff(class modbus &modbus) {
-	if(this->getStatusByName("onOff").first.get()->getValue().first.i == 1) {
+	if (this->getStatusByName("onOff").first.get()->getValue().first.i == 1) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }

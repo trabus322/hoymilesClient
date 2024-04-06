@@ -29,7 +29,8 @@ std::pair<PortParameter::PortParameterValue, PortParameter::PortParameterValueTy
 }
 
 PortParameter& PortParameter::writeValue(uint16_t value, class modbus& modbus, int portStartAddress) {
-	modbus.modbus_write_register(this->parameterAddressOffset + portStartAddress, value);
+	int writeCount;
+	writeCount = modbus.modbus_write_register(this->parameterAddressOffset + portStartAddress, value);
 	return *this;
 }
 

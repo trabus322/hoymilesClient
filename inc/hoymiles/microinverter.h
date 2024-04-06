@@ -41,6 +41,8 @@ class Microinverter {
 	long long getTotalProduction();
 
 	void setStatus(std::vector<std::pair<int, uint16_t>> portsToSet, std::string statusName);
+
+	void setStatusWholeMicroinverter(uint16_t value, std::string statusName);
 };
 
 #endif

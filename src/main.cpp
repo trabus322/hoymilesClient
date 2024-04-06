@@ -47,9 +47,9 @@ int main(int argc, char **argv) {
 	std::string shortNamesHelp{"Print short parameter names"};
 	hoymilesClient.add_flag<bool>("-s,--short", shortNames, shortNamesHelp)->group("Parameters");
 
-	std::vector<long long> microinvertersToGet{};
-	std::string microinvertersToGetHelp{"List of microinverters to fetch, delimited by ','; if omitted, all are fetched"};
-	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToGet, microinvertersToGetHelp)->delimiter(',')->group("Microinverters");
+	std::vector<long long> microinvertersToChoose{};
+	std::string microinvertersToChooseHelp{"List of microinverters to work on, delimited by ','; if omitted, all are selected"};
+	hoymilesClient.add_option<std::vector<long long>>("-m,--microinverters", microinvertersToChoose, microinvertersToChooseHelp)->delimiter(',')->group("Microinverters");
 
 	bool microinvertersGetTodayProduction{false};
 	std::string microinvertersGetTodayProductionHelp{"Show today production for microinverters"};
@@ -62,6 +62,18 @@ int main(int argc, char **argv) {
 	bool ignoreNotConnected = false;
 	std::string ignoreNotConnectedHelp{"Ignore conn_error"};
 	hoymilesClient.add_flag<bool>("-I,--ignore_conn_error", ignoreNotConnected, ignoreNotConnectedHelp)->group("Debug");
+
+	bool writeMode = false;
+	std::string writeModeHelp{"Write instead of read"};
+	hoymilesClient.add_flag<bool>("-w,--write", writeMode, writeModeHelp)->group("Write");
+
+	uint16_t writeValue;
+	std::string writeValueHelp{"Value to write"};
+	hoymilesClient.add_option<uint16_t>("-V,--value", writeValue, writeModeHelp)->group("Write")->needs(hoymilesClient.get_option("-w"));
+
+	std::string writeStatusName{};
+	std::string writeStatusNameHelp{"Status to write"};
+	hoymilesClient.add_option<std::string>("-S,--status", writeStatusName, writeStatusName)->group("Write")->needs(hoymilesClient.get_option("-w"));
 
 	try {
 		hoymilesClient.parse(argc, argv);
@@ -76,25 +88,32 @@ int main(int argc, char **argv) {
 	std::cout << "DTU construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 	std::cout << std::endl << std::endl;
 
-	while ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)) {
+	while (!writeMode && ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters))) {
 		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
 		startTime = std::chrono::high_resolution_clock::now();
-		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToGet);
+		dtu.updateMicroinverters(parametersToGet, allParameters, microinvertersToChoose);
 		endTime = std::chrono::high_resolution_clock::now();
 
 		std::cout << "Pass time: " << std::put_time(localtime(&now), "%F %T") << std::endl;
 		std::cout << "DTU update time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 
-		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToGet, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
+		dtu.printMicroinverters(parametersToGet, allParameters, microinvertersToChoose, shortNames, microinvertersGetTodayProduction, microinvertersGetTotalProduction);
 		std::cout << std::endl;
-
-		std::vector<std::pair<int, uint16_t>> portsToLimitActivePower{std::pair<int, uint16_t>(0, 69), std::pair<int, uint16_t>(1, 38), std::pair<int, uint16_t>(3, 3)};
-		dtu.getMicroinverterBySerialNumber(138273312349).first->setStatus(portsToLimitActivePower, "limitActivePower");
 	}
 	// if(dtu.modbusError()) {
 	// 	std::cerr << dtu.modbusErrorMessage() << std::endl;
 	// }
+
+	if(writeMode) {
+		std::cout << "Starting DTU write" << std::endl;
+
+		startTime = std::chrono::high_resolution_clock::now();
+		dtu.setStatusMicroinverters(writeValue, writeStatusName, microinvertersToChoose);
+		endTime = std::chrono::high_resolution_clock::now();
+
+		std::cout << "DTU write time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
+	}
 
 	return 0;
 }

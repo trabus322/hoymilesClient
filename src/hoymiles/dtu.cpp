@@ -123,3 +123,22 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 		microinvertersToGetIterator++;
 	}
 }
+
+void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long>& microinvertersToSet) {
+	if (microinvertersToSet.empty()) {
+		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+		while (microinvertersIterator != this->microinverters.end()) {
+			microinvertersToSet.push_back(microinvertersIterator->serialNumber);
+			microinvertersIterator++;
+		}
+	}
+
+	std::vector<long long>::iterator microinvertersToSetIterator = microinvertersToSet.begin();
+	while(microinvertersToSetIterator != microinvertersToSet.end()) {
+		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToSetIterator);
+		if(microinverterPair.second) {
+			microinverterPair.first->setStatusWholeMicroinverter(value, statusName);
+		}
+		microinvertersToSetIterator++;
+	}
+}

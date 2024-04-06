@@ -48,4 +48,4 @@ PortParameterLinkStatus::PortParameterLinkStatus() : PortParameterInt("linkStatu
 
 PortParameterOnOff::PortParameterOnOff() : PortParameterInt("onOff", "of", "", true, true, 0x0000, 1) {}
 
-PortParameterLimitActivePower::PortParameterLimitActivePower() : PortParameterInt("limitActivePower", "lAP", "", true, true, 0x0001, 1) {}
+PortParameterLimitActivePower::PortParameterLimitActivePower() : PortParameterInt("limitActivePower", "lAP", "%", true, true, 0x0001, 1) {}
