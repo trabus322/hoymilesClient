@@ -12,6 +12,8 @@
 Port::Port(int portStartAddress) {
 	this->portStartAddress = portStartAddress;
 
+	this->statusPortStartAddress = (((this->portStartAddress - 0x4000) / 0x0019) * 6) + 0xd006;
+
 	this->currentFixed = false;
 
 	this->populateParameters();
@@ -47,6 +49,10 @@ void Port::populateParameters() {
 	this->parameters.push_back(std::make_shared<PortParameterAlarmCount>());
 
 	this->parameters.push_back(std::make_shared<PortParameterLinkStatus>());
+
+	this->statusParameters.push_back(std::make_shared<PortParameterOnOff>());
+
+	this->statusParameters.push_back(std::make_shared<PortParameterLimitActivePower>());
 }
 
 std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::string name) {
@@ -55,6 +61,22 @@ std::pair<std::shared_ptr<PortParameter>, bool> Port::getParameterByName(std::st
 
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
 	while (parametersIterator != this->parameters.end() && !result.second) {
+		if (parametersIterator->get()->name == name) {
+			result.first = *parametersIterator;
+			result.second = true;
+		}
+		parametersIterator++;
+	}
+
+	return result;
+}
+
+std::pair<std::shared_ptr<PortParameter>, bool> Port::getStatusByName(std::string name) {
+	std::pair<std::shared_ptr<PortParameter>, bool> result;
+	result.second = false;
+
+	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->statusParameters.begin();
+	while (parametersIterator != this->statusParameters.end() && !result.second) {
 		if (parametersIterator->get()->name == name) {
 			result.first = *parametersIterator;
 			result.second = true;
@@ -80,7 +102,7 @@ void Port::fixCurrent() {
 			if (this->getParameterByName("pvPower").first->getValue().first.f > this->getParameterByName("pvVoltage").first->getValue().first.f * this->getParameterByName("pvCurrentMI").first->getValue().first.f) {
 				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentHM").first));
 			} else {
-				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentM").first));
+				this->parameters.erase(std::find(this->parameters.begin(), this->parameters.end(), this->getParameterByName("pvCurrentMI").first));
 			}
 			this->currentFixed = true;
 		}
@@ -125,8 +147,17 @@ void Port::fixCurrent() {
 
 void Port::setParametersFromMicroinverterArray(uint16_t *registers, int addressOffset) {
 	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->parameters.begin();
-	while(parametersIterator != this->parameters.end()) {
-		parametersIterator->get()->setValueFromRegisters(registers, addressOffset);
+	while (parametersIterator != this->parameters.end()) {
+		parametersIterator->get()->getValueFromRegisters(registers, addressOffset);
+		parametersIterator++;
+	}
+	this->fixCurrent();
+}
+
+void Port::setStatusesFromMicroinverterArray(uint16_t *registers, int addressOffset) {
+	std::vector<std::shared_ptr<PortParameter>>::iterator parametersIterator = this->statusParameters.begin();
+	while (parametersIterator != this->statusParameters.end()) {
+		parametersIterator->get()->getValueFromRegisters(registers, addressOffset);
 		parametersIterator++;
 	}
 }
@@ -149,7 +180,7 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 	}
 
 	while (parametersToGetIterator != parametersToGet.end()) {
-		if(*parametersToGetIterator == "microinverterSerialNumber") {
+		if (*parametersToGetIterator == "microinverterSerialNumber") {
 			parametersToGetIterator++;
 			continue;
 		}
@@ -158,14 +189,35 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 		parameterPair = this->getParameterByName(*parametersToGetIterator);
 		if (parameterPair.second) {
 			std::cout << " ";
-			if(shortNames) {
+			if (shortNames) {
 				std::cout << parameterPair.first->shortName;
-			}
-			else {
+			} else {
 				std::cout << parameterPair.first->name;
 			}
 			std::cout << ": " << parameterPair.first->getOutputValue() << " |";
 		}
 		parametersToGetIterator++;
+	}
+
+	std::vector<std::shared_ptr<PortParameter>>::iterator statusesToGetIterator = this->statusParameters.begin();
+	while (statusesToGetIterator != this->statusParameters.end()) {
+			std::cout << " ";
+			if (shortNames) {
+				std::cout << statusesToGetIterator->get()->shortName;
+			} else {
+				std::cout << statusesToGetIterator->get()->name;
+			}
+			std::cout << ": " << statusesToGetIterator->get()->getOutputValue() << " |";
+		statusesToGetIterator++;
+	}
+}
+
+void Port::turnOff(class modbus &modbus) { this->getStatusByName("onOff").first.get()->writeValue(0, modbus, this->statusPortStartAddress); }
+
+bool Port::isOff(class modbus &modbus) {
+	if (this->getStatusByName("onOff").first.get()->getValue().first.i == 1) {
+		return true;
+	} else {
+		return false;
 	}
 }

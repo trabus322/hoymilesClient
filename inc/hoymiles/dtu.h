@@ -16,10 +16,10 @@ class Dtu {
 
 	void populateMicroinverters();
 
-	std::pair<Microinverter *, bool> getMicroinverterBySerialNumber(long long serialNumber);
-
       public:
 	Dtu(const char *ip_address, int port);
+
+	std::pair<Microinverter *, bool> getMicroinverterBySerialNumber(long long serialNumber);
 
 	bool isConnected();
 
@@ -30,6 +30,10 @@ class Dtu {
 	void updateMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet);
 
 	void printMicroinverters(std::vector<std::string> &parametersToGet, bool allParameters, std::vector<long long> &microinvertersToGet, bool shortNames, bool printTodayProduction, bool printTotalProduction);
+
+	void setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long>& microinvertersToSet);
+
+	bool empty();
 
 	~Dtu();
 };

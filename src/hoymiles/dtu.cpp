@@ -90,6 +90,7 @@ void Dtu::updateMicroinverters(std::vector<std::string> &parametersToGet, bool a
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.second) {
 			microinverterPair.first->updateParameters(parametersToGet, allParameters);
+			microinverterPair.first->updateStatusParameters();
 		}
 		microinvertersToGetIterator++;
 	}
@@ -111,14 +112,37 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 			std::cout << "  " << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
 			std::cout << "  " << "Microinverter Data Age: " << microinverterPair.first->age << std::endl;
 			if (printTodayProduction) {
-				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << std::endl;
+				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << "Wh" << std::endl;
 			}
 			if (printTotalProduction) {
-				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << std::endl;
+				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << "Wh" << std::endl;
 			}
 			microinverterPair.first->printPorts(parametersToGet, allParameters, shortNames);
 			std::cout << std::endl;
 		}
 		microinvertersToGetIterator++;
 	}
+}
+
+void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long>& microinvertersToSet) {
+	if (microinvertersToSet.empty()) {
+		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+		while (microinvertersIterator != this->microinverters.end()) {
+			microinvertersToSet.push_back(microinvertersIterator->serialNumber);
+			microinvertersIterator++;
+		}
+	}
+
+	std::vector<long long>::iterator microinvertersToSetIterator = microinvertersToSet.begin();
+	while(microinvertersToSetIterator != microinvertersToSet.end()) {
+		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToSetIterator);
+		if(microinverterPair.second) {
+			microinverterPair.first->setStatusWholeMicroinverter(value, statusName);
+		}
+		microinvertersToSetIterator++;
+	}
+}
+
+bool Dtu::empty() {
+	return this->microinverters.empty();
 }

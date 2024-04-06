@@ -33,7 +33,7 @@ class SunspecParameter {
 
      public:
 
-    virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+    virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 
     std::pair<SunspecValue, SunspecValueType> getValue();
 };
@@ -44,7 +44,7 @@ class SunspecParameter {
 //       public:
 //     SunspecParameterUint32(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterUint16 : public SunspecParameter {
@@ -53,7 +53,7 @@ class SunspecParameter {
 //       public:
 //     SunspecParameterUint16(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 class SunspecParameterString32 : public SunspecParameter {
@@ -63,7 +63,7 @@ class SunspecParameterString32 : public SunspecParameter {
       public:
     SunspecParameterString32(std::string name, int registerAddressOffset, int registerSize);
 
-    virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+    virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 // class SunspecParameterString16 : public SunspecParameter {
@@ -73,7 +73,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterString16(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterSunssf : public SunspecParameter {
@@ -82,7 +82,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterSunssf(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterInt16 : public SunspecParameter {
@@ -91,7 +91,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterInt16(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterAcc32 : public SunspecParameter {
@@ -100,7 +100,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterAcc32(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterFloat32 : public SunspecParameter {
@@ -109,7 +109,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterFloat32(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 // class SunspecParameterEnum16 : public SunspecParameter {
@@ -118,7 +118,7 @@ class SunspecParameterString32 : public SunspecParameter {
 //       public:
 //     SunspecParameterEnum16(std::string name, int registerAddressOffset, int registerSize);
 
-//     virtual void setValueFromRegisters(uint16_t *registers, int addressOffset);
+//     virtual void getValueFromRegisters(uint16_t *registers, int addressOffset);
 // };
 
 #endif

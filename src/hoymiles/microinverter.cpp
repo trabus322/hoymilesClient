@@ -13,6 +13,8 @@ Microinverter::Microinverter(std::shared_ptr<class modbus> modbus, int startAddr
 	this->startAddress = startAddress;
 	this->serialNumber = serialNumber;
 
+	this->statusStartAddress = (((this->startAddress - 0x4000) / 0x0019) * 6) + 0xd006;
+
 	this->age = 0;
 }
 
@@ -43,7 +45,37 @@ void Microinverter::updateParameters(std::vector<std::string> &parametersToGet, 
 		}
 
 		for (int i{0}; i < portsToRead; i++) {
-			this->ports.at(i).setParametersFromMicroinverterArray(registers, i * 0x0019);
+			this->ports.at(i + portsRead).setParametersFromMicroinverterArray(registers, i * 0x0019);
+		}
+
+		portsRead += portsToRead;
+	}
+}
+
+void Microinverter::updateStatusParameters() {
+	int portsRead = 0;
+	while (portsRead < this->ports.size()) {
+		int portsToRead = 0;
+		while (portsToRead * 6 < (128 - 6) && (portsToRead + portsRead) < this->ports.size()) {
+			portsToRead++;
+		}
+
+		int registersToRead = (portsToRead * 6);
+		uint16_t registers[registersToRead];
+
+		int registerCount;
+		registerCount = this->modbus.get()->modbus_read_holding_registers(this->statusStartAddress + (portsRead * 6), registersToRead, registers);
+
+		if (registerCount != 0) {
+			this->age++;
+			return;
+		}
+		else {
+			this->age = 0;
+		}
+
+		for (int i{0}; i < portsToRead; i++) {
+			this->ports.at(i + portsRead).setStatusesFromMicroinverterArray(registers, i * 6);
 		}
 
 		portsRead += portsToRead;
@@ -81,4 +113,27 @@ long long Microinverter::getTotalProduction() {
 	}
 
 	return result;
+}
+
+void Microinverter::setStatus(std::vector<std::pair<int, uint16_t>> portsToSet, std::string statusName) {
+	std::vector<std::pair<int, uint16_t>>::iterator portsToSetIterator = portsToSet.begin();
+	while(portsToSetIterator != portsToSet.end()) {
+		try {
+			if(this->ports.at(portsToSetIterator->first).getStatusByName(statusName).second) {
+				this->ports.at(portsToSetIterator->first).getStatusByName(statusName).first->writeValue(portsToSetIterator->second, *this->modbus, this->statusStartAddress);
+			}
+		}
+		catch(const std::out_of_range& outOfRange) {
+			std::cerr << outOfRange.what() << std::endl;
+		}
+		portsToSetIterator++;
+	}
+}
+
+void Microinverter::setStatusWholeMicroinverter(uint16_t value, std::string statusName) {
+	if(this->ports.begin() != this->ports.end()) {
+		if(this->ports.begin()->getStatusByName(statusName).second) {
+			this->ports.begin()->getStatusByName(statusName).first.get()->writeValue(value, *this->modbus, this->ports.begin()->statusPortStartAddress);
+		}
+	}
 }

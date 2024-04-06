@@ -23,7 +23,7 @@ void Sunspec::setValues() {
 
     std::vector<std::shared_ptr<SunspecParameter>>::iterator parametersIterator = this->parameters.begin();
     while(parametersIterator != this->parameters.end()) {
-        parametersIterator->get()->setValueFromRegisters(registers, 0);
+        parametersIterator->get()->getValueFromRegisters(registers, 0);
         parametersIterator++;
     }
 }

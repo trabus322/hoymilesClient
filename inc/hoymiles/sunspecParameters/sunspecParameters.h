@@ -9,7 +9,7 @@ class SunspecParameterManufacturer : public SunspecParameterString32 {
       public:
     SunspecParameterManufacturer();
 
-    void setValueFromRegisters(uint16_t *registers, int addressOffset);
+    void getValueFromRegisters(uint16_t *registers, int addressOffset);
 };
 
 #endif
