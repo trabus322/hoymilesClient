@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 	std::cout << "DTU construction time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << "ms" << std::endl;
 	std::cout << std::endl << std::endl;
 
-	while (!writeMode && ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters))) {
+	while (!writeMode && (!dtu.empty() && ((dtu.isConnected() || ignoreNotConnected) && (!parametersToGet.empty() || allParameters)))) {
 		time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
 		startTime = std::chrono::high_resolution_clock::now();

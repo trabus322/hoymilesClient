@@ -33,6 +33,8 @@ class Dtu {
 
 	void setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long>& microinvertersToSet);
 
+	bool empty();
+
 	~Dtu();
 };
 

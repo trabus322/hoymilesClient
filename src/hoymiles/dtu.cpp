@@ -142,3 +142,7 @@ void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::v
 		microinvertersToSetIterator++;
 	}
 }
+
+bool Dtu::empty() {
+	return this->microinverters.empty();
+}
