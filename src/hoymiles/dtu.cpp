@@ -44,6 +44,8 @@ void Dtu::populateMicroinverters() {
 	int portStartAddress = 0x4000;
 	uint16_t registers[19];
 
+	modbus_set_debug(this->modbus, 1);
+
 	int registerCount;
 	registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
 
@@ -51,10 +53,10 @@ void Dtu::populateMicroinverters() {
 		return;
 	}
 
-	while (registerCount != -1) {
-		if(registers[0] != 12) {
-			break;
-		}
+	while (portStartAddress <= (0x4000 + 0x0019*99)) {
+		// if(registers[0] != 12) {
+		// 	break;
+		// }
 
 		Port port{portStartAddress};
 		port.setParametersFromMicroinverterArray(registers, 0);
