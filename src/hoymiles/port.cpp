@@ -212,9 +212,9 @@ void Port::printParameters(std::vector<std::string> &parametersToGet, bool allPa
 	}
 }
 
-void Port::turnOff(class modbus &modbus) { this->getStatusByName("onOff").first.get()->writeValue(0, modbus, this->statusPortStartAddress); }
+void Port::turnOff(modbus_t *modbus) { this->getStatusByName("onOff").first.get()->writeValue(0, modbus, this->statusPortStartAddress); }
 
-bool Port::isOff(class modbus &modbus) {
+bool Port::isOff(modbus_t *modbus) {
 	if (this->getStatusByName("onOff").first.get()->getValue().first.i == 1) {
 		return true;
 	} else {

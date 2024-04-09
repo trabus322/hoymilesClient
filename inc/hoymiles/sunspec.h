@@ -11,7 +11,7 @@
 
 class Sunspec {
       protected:
-    std::shared_ptr<class modbus> modbus;
+    modbus_t *modbus;
 
     std::vector<std::shared_ptr<SunspecParameter>> parameters;
 
@@ -29,7 +29,7 @@ class Sunspec {
     void populateParameters();
 
       public:
-    Sunspec(int address, std::shared_ptr<class modbus> modbus);
+    Sunspec(int address, modbus_t *modbus);
 
     uint16_t getAddress();
 };

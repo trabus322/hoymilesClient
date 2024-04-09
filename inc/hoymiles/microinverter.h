@@ -11,7 +11,7 @@
 
 class Microinverter {
       private:
-	std::shared_ptr<class modbus> modbus;
+	modbus_t *modbus;
 
 	Sunspec sunspec;
 
@@ -20,7 +20,7 @@ class Microinverter {
 	int statusStartAddress;
 
       public:
-	Microinverter(std::shared_ptr<class modbus> modbus, int startAddress, long long serialNumber);
+	Microinverter(modbus_t *modbus, int startAddress, long long serialNumber);
 
 	long long serialNumber;
 

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 #include "modbus.h"
 
@@ -9,41 +11,47 @@
 
 #include "portParameters.h"
 
-Dtu::Dtu(const char *ip_address, int port) {
-	class modbus modbus {
-		ip_address, (uint16_t)port
-	};
-	this->modbus = std::make_shared<class modbus>(modbus);
-
-	if (!this->modbus.get()->modbus_connect()) {
-		std::cerr << "NOT CONNECTED" << std::endl;
+Dtu::Dtu(const char *address, int id, bool rtu, bool tcp) {
+	if(tcp) {
+		this->modbus = modbus_new_tcp(address, id);
+	}
+	if(rtu) {
+		this->modbus = modbus_new_rtu(address, 9600, 'N', 8, 1);
+		modbus_rtu_set_serial_mode(this->modbus, MODBUS_RTU_RS485);
 	}
 
-	if (this->modbus.get()->is_connected()) {
+	this->connected = false;
+	if (modbus_connect(this->modbus) == -1) {
+		std::cerr << "NOT CONNECTED" << std::endl;
+	}
+	else {
+		this->connected = true;
+		if(rtu) {
+			modbus_set_slave(this->modbus, id);
+		}
 		this->populateMicroinverters();
 	}
 }
 
-bool Dtu::isConnected() { return this->modbus.get()->is_connected(); }
+bool Dtu::isConnected() { return this->connected; }
 
-bool Dtu::modbusError() { return this->modbus.get()->err; }
-
-std::string Dtu::modbusErrorMessage() { return this->modbus.get()->error_msg; }
-
-Dtu::~Dtu() { this->modbus.get()->modbus_close(); }
+Dtu::~Dtu() {
+	modbus_close(this->modbus);
+	modbus_free(this->modbus);
+}
 
 void Dtu::populateMicroinverters() {
 	int portStartAddress = 0x4000;
 	uint16_t registers[19];
 
 	int registerCount;
-	registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 19, registers);
+	registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
 
-	if (registerCount != 0) {
+	if (registerCount == -1) {
 		return;
 	}
 
-	while (registerCount == 0) {
+	while (registerCount != -1) {
 		if(registers[0] != 12) {
 			break;
 		}
@@ -60,7 +68,8 @@ void Dtu::populateMicroinverters() {
 
 		portStartAddress += 0x0019;
 
-		registerCount = this->modbus.get()->modbus_read_holding_registers(portStartAddress, 19, registers);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
 	}
 }
 
@@ -145,4 +154,13 @@ void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::v
 
 bool Dtu::empty() {
 	return this->microinverters.empty();
+}
+
+void Dtu::listOfMicroinverters() {
+	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
+	std::cout << "Microinverter list:" << std::endl;
+	while(microinvertersIterator != this->microinverters.end()) {
+		std::cout << "  " << microinvertersIterator->serialNumber << std::endl;
+		microinvertersIterator++;
+	}
 }

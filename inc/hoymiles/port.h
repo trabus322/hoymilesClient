@@ -41,9 +41,9 @@ class Port {
 
 	void printParameters(std::vector<std::string> &parametersToGet, bool allParameters, bool shortNames);
 
-	void turnOff(class modbus &modbus);
+	void turnOff(modbus_t *modbus);
 
-	bool isOff(class modbus &modbus);
+	bool isOff(modbus_t *modbus);
 };
 
 #endif
