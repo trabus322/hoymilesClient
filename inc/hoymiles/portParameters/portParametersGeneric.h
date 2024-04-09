@@ -42,7 +42,7 @@ class PortParameter {
 
 	std::pair<PortParameterValue, PortParameterValueType> getValue();
 
-	PortParameter& writeValue(uint16_t value, class modbus& modbus, int portStartAddress);
+	PortParameter& writeValue(uint16_t value, modbus_t *modbus, int portStartAddress);
 
 	virtual std::string getOutputValue();
 
