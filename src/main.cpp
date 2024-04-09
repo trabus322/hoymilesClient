@@ -19,24 +19,23 @@ int main(int argc, char **argv) {
 	signal(SIGTERM, sigHandler);
 	signal(SIGABRT, sigHandler);
 
-	std::string version{"v2.3"};
+	std::string version{"v2.3h"};
 	std::cout << version << std::endl;
 
 	CLI::App hoymilesClient{"Client for DTU-Pro/DTU-ProS"};
 
 	hoymilesClient.set_version_flag("-v,--version", version);
 
+	int rtuDeviceAddress{1};
+	std::string rtuDeviceAddressHelp{"Address on RS485 {default: }" + std::to_string(rtuDeviceAddress) + "}"};
+	hoymilesClient.add_option<int>("-a,--rt_device_address", rtuDeviceAddress, rtuDeviceAddressHelp)->group("Serial");
 	std::string serialDeviceAddress{""};
 	std::string serialDeviceAddressHelp{"Serial device address"};
-	hoymilesClient.add_option<std::string>("-d,--serial_device_address", serialDeviceAddress, serialDeviceAddressHelp)->group("Serial");
+	hoymilesClient.add_option<std::string>("-d,--serial_device_address", serialDeviceAddress, serialDeviceAddressHelp)->needs(hoymilesClient.get_option("-a"))->group("Serial");
 
 	bool rtuMode{false};
 	std::string rtuModeHelp{"Work in RTU mode"};
 	hoymilesClient.add_flag<bool>("-r,--rtu", rtuMode, rtuModeHelp)->needs(hoymilesClient.get_option("-d"))->group("Serial");
-
-	int rtuDeviceAddress{1};
-	std::string rtuDeviceAddressHelp{"Address on RS485 {default: }" + std::to_string(rtuDeviceAddress) + "}"};
-	hoymilesClient.add_option<int>("-a,--rt_device_address", rtuDeviceAddress, rtuDeviceAddressHelp)->group("Serial");
 
 	std::string ipAddress{"127.0.0.1"};
 	std::string ipAddressHelp{"Ipv4 address of DTU {default: " + ipAddress + "}"};
@@ -135,7 +134,7 @@ int main(int argc, char **argv) {
 	// 	std::cerr << dtu.modbusErrorMessage() << std::endl;
 	// }
 
-	if(getMicroinverters) {
+	if (getMicroinverters) {
 		dtu.listOfMicroinverters();
 	}
 
