@@ -1,8 +1,8 @@
+#include <chrono>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <chrono>
 #include <thread>
+#include <vector>
 
 #include "modbus.h"
 
@@ -12,10 +12,10 @@
 #include "portParameters.h"
 
 Dtu::Dtu(const char *address, int id, bool rtu, bool tcp) {
-	if(tcp) {
+	if (tcp) {
 		this->modbus = modbus_new_tcp(address, id);
 	}
-	if(rtu) {
+	if (rtu) {
 		this->modbus = modbus_new_rtu(address, 9600, 'N', 8, 1);
 		modbus_rtu_set_serial_mode(this->modbus, MODBUS_RTU_RS485);
 	}
@@ -23,10 +23,9 @@ Dtu::Dtu(const char *address, int id, bool rtu, bool tcp) {
 	this->connected = false;
 	if (modbus_connect(this->modbus) == -1) {
 		std::cerr << "NOT CONNECTED" << std::endl;
-	}
-	else {
+	} else {
 		this->connected = true;
-		if(rtu) {
+		if (rtu) {
 			modbus_set_slave(this->modbus, id);
 		}
 		this->populateMicroinverters();
@@ -44,34 +43,24 @@ void Dtu::populateMicroinverters() {
 	int portStartAddress = 0x4000;
 	uint16_t registers[19];
 
-	modbus_set_debug(this->modbus, 1);
+	while (portStartAddress <= (0x4000 + 0x0019 * 99)) {
+		int registerCount;
+		registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
+		if (registers[0] == 12) {
+			Port port{portStartAddress};
+			port.setParametersFromMicroinverterArray(registers, 0);
 
-	int registerCount;
-	registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
+			if (!this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).second) {
+				Microinverter microinverter{this->modbus, portStartAddress, port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i};
+				this->microinverters.push_back(microinverter);
+			}
 
-	if (registerCount == -1) {
-		return;
-	}
-
-	while (portStartAddress <= (0x4000 + 0x0019*99)) {
-		// if(registers[0] != 12) {
-		// 	break;
-		// }
-
-		Port port{portStartAddress};
-		port.setParametersFromMicroinverterArray(registers, 0);
-
-		if (!this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).second) {
-			Microinverter microinverter{this->modbus, portStartAddress, port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i};
-			this->microinverters.push_back(microinverter);
+			this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).first->ports.push_back(port);
 		}
-
-		this->getMicroinverterBySerialNumber(port.getParameterByName("microinverterSerialNumber").first.get()->getValue().first.i).first->ports.push_back(port);
 
 		portStartAddress += 0x0019;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		registerCount = modbus_read_registers(this->modbus, portStartAddress, 19, registers);
 	}
 }
 
@@ -120,13 +109,17 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 	while (microinvertersToGetIterator != microinvertersToGet.end()) {
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToGetIterator);
 		if (microinverterPair.second) {
-			std::cout << "  " << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
-			std::cout << "  " << "Microinverter Data Age: " << microinverterPair.first->age << std::endl;
+			std::cout << "  "
+				  << "Microinverter: " << microinverterPair.first->serialNumber << std::endl;
+			std::cout << "  "
+				  << "Microinverter Data Age: " << microinverterPair.first->age << std::endl;
 			if (printTodayProduction) {
-				std::cout << "  " << "TodayProduction: " << microinverterPair.first->getTodayProduction() << "Wh" << std::endl;
+				std::cout << "  "
+					  << "TodayProduction: " << microinverterPair.first->getTodayProduction() << "Wh" << std::endl;
 			}
 			if (printTotalProduction) {
-				std::cout << "  " << "TotalProduction: " << microinverterPair.first->getTotalProduction() << "Wh" << std::endl;
+				std::cout << "  "
+					  << "TotalProduction: " << microinverterPair.first->getTotalProduction() << "Wh" << std::endl;
 			}
 			microinverterPair.first->printPorts(parametersToGet, allParameters, shortNames);
 			std::cout << std::endl;
@@ -135,7 +128,7 @@ void Dtu::printMicroinverters(std::vector<std::string> &parametersToGet, bool al
 	}
 }
 
-void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long>& microinvertersToSet) {
+void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::vector<long long> &microinvertersToSet) {
 	if (microinvertersToSet.empty()) {
 		std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
 		while (microinvertersIterator != this->microinverters.end()) {
@@ -145,23 +138,21 @@ void Dtu::setStatusMicroinverters(uint16_t value, std::string statusName, std::v
 	}
 
 	std::vector<long long>::iterator microinvertersToSetIterator = microinvertersToSet.begin();
-	while(microinvertersToSetIterator != microinvertersToSet.end()) {
+	while (microinvertersToSetIterator != microinvertersToSet.end()) {
 		std::pair<Microinverter *, bool> microinverterPair = this->getMicroinverterBySerialNumber(*microinvertersToSetIterator);
-		if(microinverterPair.second) {
+		if (microinverterPair.second) {
 			microinverterPair.first->setStatusWholeMicroinverter(value, statusName);
 		}
 		microinvertersToSetIterator++;
 	}
 }
 
-bool Dtu::empty() {
-	return this->microinverters.empty();
-}
+bool Dtu::empty() { return this->microinverters.empty(); }
 
 void Dtu::listOfMicroinverters() {
 	std::vector<Microinverter>::iterator microinvertersIterator = this->microinverters.begin();
 	std::cout << "Microinverter list:" << std::endl;
-	while(microinvertersIterator != this->microinverters.end()) {
+	while (microinvertersIterator != this->microinverters.end()) {
 		std::cout << "  " << microinvertersIterator->serialNumber << std::endl;
 		microinvertersIterator++;
 	}
