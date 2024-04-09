@@ -11,8 +11,9 @@ void PortParameterMicroinverterSerialNumber::getValueFromRegisters(uint16_t *reg
 	std::string readValueString = "";
 	for (int i{0}; i < this->registerSize; i++) {
 		std::stringstream readValueStringStream;
-		readValueStringStream << std::hex << (int) ((registers[addressOffset + this->parameterAddressOffset + i] & 0xff00) >> 8);
-		readValueStringStream << std::hex << (int) (registers[addressOffset + this->parameterAddressOffset + i] & 0x00ff);
+		readValueStringStream.fill('0');
+		readValueStringStream << std::setw(2) << std::hex << (int) ((registers[addressOffset + this->parameterAddressOffset + i] & 0xff00) >> 8);
+		readValueStringStream << std::setw(2) << std::hex << (int) (registers[addressOffset + this->parameterAddressOffset + i] & 0x00ff);
 		readValueString.append(readValueStringStream.str());
 	}
 	this->value.i = std::stoll(readValueString);
