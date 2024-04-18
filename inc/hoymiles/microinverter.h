@@ -13,7 +13,7 @@ class Microinverter {
       private:
 	modbus_t *modbus;
 
-	Sunspec sunspec;
+	// Sunspec sunspec;
 
 	int startAddress;
 
@@ -43,6 +43,10 @@ class Microinverter {
 	void setStatus(std::vector<std::pair<int, uint16_t>> portsToSet, std::string statusName);
 
 	void setStatusWholeMicroinverter(uint16_t value, std::string statusName);
+
+	float getCurrentPower();
+
+	int getCurrentOnOff();
 };
 
 #endif

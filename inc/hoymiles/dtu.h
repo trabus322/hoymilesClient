@@ -14,12 +14,18 @@ class Dtu {
 
 	std::vector<Microinverter> microinverters;
 
+	Port dtuPort;
+
+	int rtuId;
+
 	bool connected;
 
 	void populateMicroinverters();
 
       public:
 	Dtu(const char *address, int id, bool rtu, bool tcp);
+
+	Dtu(modbus_t *modbus, int id);
 
 	std::pair<Microinverter *, bool> getMicroinverterBySerialNumber(long long serialNumber);
 
@@ -34,6 +40,15 @@ class Dtu {
 	bool empty();
 
 	void listOfMicroinverters();
+
+	float getCurrentPower();
+
+	int getCurrentOnOff();
+
+	void turnOffMicroinverters();
+	void turnOnMicroinverters();
+
+	void limitMicroinverters(uint16_t limit);
 
 	~Dtu();
 };
