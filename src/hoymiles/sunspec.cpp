@@ -16,10 +16,10 @@ Sunspec::Sunspec(int address, modbus_t *modbus) {
 }
 
 void Sunspec::setValues() {
-    uint16_t registers[70];
+    uint16_t registers[2];
 
     int registerCount;
-    registerCount = modbus_read_registers(this->modbus, this->sunspecAddress, 70, registers);
+    registerCount = modbus_read_registers(this->modbus, this->sunspecAddress, 2, registers);
 
     std::vector<std::shared_ptr<SunspecParameter>>::iterator parametersIterator = this->parameters.begin();
     while(parametersIterator != this->parameters.end()) {

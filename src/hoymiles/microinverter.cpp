@@ -8,7 +8,7 @@
 #include "port.h"
 #include "sunspec.h"
 
-Microinverter::Microinverter(modbus_t *modbus, int startAddress, long long serialNumber) : sunspec(40000, modbus) {
+Microinverter::Microinverter(modbus_t *modbus, int startAddress, long long serialNumber) {
 	this->modbus = modbus;
 	this->startAddress = startAddress;
 	this->serialNumber = serialNumber;
@@ -135,5 +135,31 @@ void Microinverter::setStatusWholeMicroinverter(uint16_t value, std::string stat
 		if(this->ports.begin()->getStatusByName(statusName).second) {
 			this->ports.begin()->getStatusByName(statusName).first.get()->writeValue(value, this->modbus, this->ports.begin()->statusPortStartAddress);
 		}
+	}
+}
+
+float Microinverter::getCurrentPower() {
+	std::vector<Port>::iterator portsIterator = this->ports.begin();
+	float currentPower{0};
+	while(portsIterator != this->ports.end()) {
+		currentPower += portsIterator->getParameterByName("pvPower").first.get()->getValue().first.f;
+		portsIterator++;
+	}
+	return currentPower;
+}
+
+int Microinverter::getCurrentOnOff() {
+	std::vector<Port>::iterator portsIterator = this->ports.begin();
+	int currentOn{0};
+	while(portsIterator != this->ports.end()) {
+		currentOn += portsIterator->getStatusByName("onOff").first.get()->getValue().first.i;
+		portsIterator++;
+	}
+	float balance = currentOn / this->ports.size();
+	if(balance >= 0.5) {
+		return 1;
+	}
+	else {
+		return 0;
 	}
 }
